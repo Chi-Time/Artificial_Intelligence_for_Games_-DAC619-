@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.AI_System;
 using UnityEngine;
 
 /*****************************************************************************************************************************
@@ -78,30 +79,42 @@ using UnityEngine;
 /// </summary>
 public class AI : MonoBehaviour
 {
-    // Gives access to important data about the AI agent (see above)
-    private AgentData _agentData;
-    // Gives access to the agent senses
-    private Sensing _agentSenses;
-    // gives access to the agents inventory
-    private InventoryController _agentInventory;
-    // This is the script containing the AI agents actions
-    // e.g. agentScript.MoveTo(enemy);
-    private AgentActions _agentActions;
+    ///<summary> Gives access to important data about the AI agent </summary>
+    public AgentData Data { get; private set; }
+    ///<summary> Gives access to the agent senses </summary>
+    public Sensing Senses { get; private set; }
+    ///<summary> This is the script containing the AI agents actions </summary>
+    public AgentActions Actions { get; private set; }
+    ///<summary> Gives access to the agents inventory</summary>
+    public InventoryController Inventory { get; private set; }
+    ///<summary> Gives access to the agent's brain. </summary>
+    public GoalThink Brain { get; private set; }
 
+    private void Awake ()
+    {
+        // Setup our agent's brain.
+        Brain = new GoalThink (this);
+    }
 
     // Use this for initialization
     void Start ()
     {
         // Initialise the accessable script components
-        _agentData = GetComponent<AgentData>();
-        _agentActions = GetComponent<AgentActions>();
-        _agentSenses = GetComponentInChildren<Sensing>();
-        _agentInventory = GetComponentInChildren<InventoryController>();
+        Data = GetComponent<AgentData>();
+        Actions = GetComponent<AgentActions>();
+        Senses = GetComponentInChildren<Sensing>();
+        Inventory = GetComponentInChildren<InventoryController>();
+
+        Features.DistanceToItem (this, Names.HealthKit);
     }
 
     // Update is called once per frame
     void Update ()
     {
         // Run your AI code in here
+        Brain.ProcessSubgoals ();
+
+        if (Brain.IsInactive)
+            Brain.Arbitrate ();
     }
 }
