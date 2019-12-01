@@ -141,9 +141,14 @@ public class Sensing : MonoBehaviour
     {
         if (item != null)
         {
-            if (Vector3.Distance(gameObject.transform.parent.position, item.transform.position) < _agentData.PickUpRange)
+            var collectablesInView = GetCollectablesInView ();
+
+            if (collectablesInView.Count > 0)
             {
-                return true;
+                if (Vector3.Distance (gameObject.transform.parent.position, item.transform.position) < _agentData.PickUpRange)
+                {
+                    return true;
+                }
             }
         }
 
