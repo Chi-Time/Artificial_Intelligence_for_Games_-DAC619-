@@ -225,7 +225,7 @@ public class AgentData : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start ()
+    void Awake ()
     {        
         CurrentHitPoints = MaxHitPoints;
 
@@ -252,6 +252,7 @@ public class AgentData : MonoBehaviour
 
                 break;
         }
+
         _friendlyTeamScore = _friendlyBase.GetComponent<SetScore>();
         _enemyTeamScore = _enemyBase.GetComponent<SetScore>();
     }

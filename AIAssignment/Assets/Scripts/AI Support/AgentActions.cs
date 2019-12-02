@@ -29,7 +29,7 @@ public class AgentActions : MonoBehaviour
     }
 
     // Use this for initialization, get references to all the component scripts we'll need
-    void Start()
+    void Awake()
     {
         _agentData = GetComponent<AgentData>();
         _agentSenses = GetComponentInChildren<Sensing>();
@@ -45,7 +45,7 @@ public class AgentActions : MonoBehaviour
     /// <param name="destinationToTest">The location we are testing</param>
     /// <param name="destination">A valid destination</param>
     /// <returns>true if a destination was found, false otherwise</returns>
-    private bool TestDestination(Vector3 destinationToTest, out Vector3 destination)
+    public bool TestDestination(Vector3 destinationToTest, out Vector3 destination)
     {
         // Check we can move there
         UnityEngine.AI.NavMeshHit navHit;
