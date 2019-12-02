@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using Assets.Scripts.AI_System;
+using Assets.Scripts.AI_System.States;
 /*****************************************************************************************************************************
  * Write your core AI code in this file here. The private variable 'agentScript' contains all the agents actions which are listed
  * below. Ensure your code it clear and organised and commented.
@@ -79,29 +80,50 @@ using UnityEngine;
 public class AI : MonoBehaviour
 {
     // Gives access to important data about the AI agent (see above)
-    private AgentData _agentData;
+    public AgentData Data { get; private set; }
     // Gives access to the agent senses
-    private Sensing _agentSenses;
+    public Sensing Senses { get; private set; }
     // gives access to the agents inventory
-    private InventoryController _agentInventory;
+    public InventoryController Inventory { get; private set; }
     // This is the script containing the AI agents actions
     // e.g. agentScript.MoveTo(enemy);
-    private AgentActions _agentActions;
+    public AgentActions Actions { get; private set; }
+    public StateMachine<AI> Brain { get; private set; }
 
+    private void Awake ()
+    {
+        Brain = new StateMachine<AI> (this);
+
+        // Initialise the accessable script components
+        Data = GetComponent<AgentData> ();
+        Actions = GetComponent<AgentActions> ();
+        Senses = GetComponentInChildren<Sensing> ();
+        Inventory = GetComponentInChildren<InventoryController> ();
+    }
 
     // Use this for initialization
-    void Start ()
+    private void Start ()
     {
-        // Initialise the accessable script components
-        _agentData = GetComponent<AgentData>();
-        _agentActions = GetComponent<AgentActions>();
-        _agentSenses = GetComponentInChildren<Sensing>();
-        _agentInventory = GetComponentInChildren<InventoryController>();
+        Brain.SetGlobalState (GetGlobalState ());
+        Brain.SetCurrentState (new State_Wander ());
+        Brain.ChangeState (new State_AttackEnemy ());
+    }
+
+    private IState<AI> GetGlobalState ()
+    {
+        var globalState = new State_Globals ();
+
+        globalState.AddEvaluator (new Evaluator_AttackEnemy ());
+        globalState.AddEvaluator (new Evaluator_Wander ());
+        globalState.AddEvaluator (new Evaluator_GetHealthKit ());
+
+        return globalState;
     }
 
     // Update is called once per frame
-    void Update ()
+    private void Update ()
     {
         // Run your AI code in here
+        Brain.Process ();
     }
 }
