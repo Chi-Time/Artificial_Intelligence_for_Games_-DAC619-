@@ -58,7 +58,7 @@ namespace Assets.Scripts.AI_System
         /// <param name="state">The state to test for.</param>
         public bool IsInState (IState<T> state)
         {
-            if (_CurrentState == state)
+            if (_CurrentState.GetType () == state.GetType ())
                 return true;
 
             return false;
