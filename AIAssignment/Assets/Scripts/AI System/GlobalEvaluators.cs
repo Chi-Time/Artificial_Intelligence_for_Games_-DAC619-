@@ -15,22 +15,23 @@ namespace Assets.Scripts.AI_System
         /// <returns>A normalised value between a range of 0-1 representing the desirability.</returns>
         public static float Evaluator_DistanceToObject (AI agent, GameObject obj)
         {
-            //TODO: Tweak values as 100 is quite a large distance.
             const float minDistance = 0f;
-            const float maxDistance = 100f;
+            const float maxDistance = 50f;
             float distance = Vector3.Distance (agent.transform.position, obj.transform.position);
 
             if (distance > maxDistance)
                 return 0.0f;
 
-            float desirability = Utilities.GetDistribution (distance, minDistance, maxDistance);
+            float desirability = Helpers.GetDistribution (distance, minDistance, maxDistance);
 
-            return desirability;
+            return UtilityCurves.Exponential.Evaluate (desirability);
         }
 
         public static float Evaluator_Health (AI agent)
         {
-            return Utilities.GetDistribution (agent.Data.CurrentHitPoints, 0.0f, agent.Data.MaxHitPoints);
+            float desirability = Helpers.GetDistribution (agent.Data.CurrentHitPoints, 0.0f, agent.Data.MaxHitPoints);
+
+            return UtilityCurves.Linear.Evaluate (desirability);
         }
 
         public static float Evaluator_Strength (AI agent)
@@ -45,14 +46,14 @@ namespace Assets.Scripts.AI_System
                 // Apply the powerup to his normal damage.
                 damage = agent.Data.PowerUpAmount * agent.Data.NormalAttackDamage;
                 // Find out the desirability of his powered up damage.
-                desirability = Utilities.GetDistribution (damage, 0, 20);
+                desirability = Helpers.GetDistribution (damage, 0, 20);
 
-                return Mathf.Clamp (desirability, 0.0f, 1.0f);
+                return desirability;
             }
 
             damage *= tweaker;
-            desirability = Utilities.GetDistribution (damage, 0, 20);
-            return Mathf.Clamp (desirability, 0.0f, 1.0f);
+            desirability = Helpers.GetDistribution (damage, 0, 20);
+            return desirability;
         }
     }
 }
