@@ -39,7 +39,14 @@ namespace Assets.Scripts.AI_System.States
                 return StateType.Failed;
             }
 
-            agent.Actions.AttackEnemy (_Enemy.gameObject);
+            if (agent.Senses.IsInAttackRange (_Enemy.gameObject))
+            {
+                agent.Actions.AttackEnemy (_Enemy.gameObject);
+            }
+            else
+            {
+                agent.Actions.MoveTo (_Enemy.gameObject);
+            }
 
             return StateType.Active;
         }
