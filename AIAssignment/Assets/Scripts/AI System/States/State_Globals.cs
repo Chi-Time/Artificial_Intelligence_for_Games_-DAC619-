@@ -21,11 +21,11 @@ namespace Assets.Scripts.AI_System.States
             Log.EnteredState ("Globals", agent);
         }
 
-        public void Process (AI agent)
+        public StateType Process (AI agent)
         {
             Log.ProcessingState ("Globals", agent);
 
-            // Default values for both desirabiltiy and evaluator.
+            // Default values for both desirability and evaluator.
             float bestDesirability = 0.0f;
             IEvaluator<AI> bestEvaluator = null;
 
@@ -34,6 +34,8 @@ namespace Assets.Scripts.AI_System.States
             {
                 //Calculate the desirability of the current task.
                 float desirability = evaluator.CalculateDesirability (agent);
+                
+                Log.Desirability (desirability, agent);
 
                 // If the desirability of this given evaluator is higher than a previous.
                 if (desirability >= bestDesirability)
@@ -47,12 +49,17 @@ namespace Assets.Scripts.AI_System.States
             // Grab the desired state from our best evaluator.
             var desiredState = bestEvaluator.GetState ();
 
-            // Check to see if we are already in the desired state. If we are, then leave as there's nothing more to do.
+            // Check to see if we are already in the desired state. If we're not, then switch to the newly desired state.
             if (agent.Brain.IsInState (desiredState) == false)
-                return;
-            // If we're not, then switch to the newly desired state.
-            else
+            {
                 agent.Brain.ChangeState (desiredState);
+                return StateType.Active;
+            }
+            // If we are, then leave as there's nothing more to do.
+            else
+            {
+                return StateType.Active;
+            }
         }
 
         public void Exit (AI agent)

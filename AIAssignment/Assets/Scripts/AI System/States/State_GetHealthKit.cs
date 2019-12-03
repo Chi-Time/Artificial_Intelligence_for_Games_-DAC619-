@@ -16,30 +16,33 @@ namespace Assets.Scripts.AI_System.States
         {
             Log.EnteredState ("GetHealthKit", agent);
 
-            _HealthKitSpawner = GameObject.Find ("HealthKitSpawner");
-
             if (_HealthKitSpawner == null)
             {
-                Debug.Log ("Couldn't find it");
-                agent.Brain.ChangeState (new State_Wander ());
+                _HealthKitSpawner = GameObject.Find ("HealthKitSpawner");
+
+                if (_HealthKitSpawner == null)
+                {
+                    Debug.LogError ("Health Kit Spawner Could Not Be Found!!");
+                    agent.Brain.ChangeState (new State_Wander ());
+                }
             }
         }
 
-        public void Process (AI agent)
+        public StateType Process (AI agent)
         {
             // Check to see if the kit still exists in the world.
             if (_HealthKitSpawner == null)
             {
                 // If it doesn't then go back to an idle state.
                 agent.Brain.ChangeState (new State_Wander ());
-                return;
+                return StateType.Failed;
             }
 
             // Move towards the health kit.
             agent.Actions.MoveTo (_HealthKitSpawner);
 
-            // Are we in range for picking up the kit?
-            if (IsInRange (agent))
+            // Are we in range for seeing the kit?
+            if (IsInSightRange (agent))
             {
                 if (_HealthKit == null)
                 {
@@ -51,21 +54,25 @@ namespace Assets.Scripts.AI_System.States
                 {
                     if (_HealthKit != null)
                     {
-                        Debug.Log ("I can see it and I'm grabbin: " + agent.name);
                         // If we can, then collect it and return to a default state.
                         agent.Actions.CollectItem (_HealthKit);
+
+                        // Check if we collected, if we did then return that we did our job.
+                        if (agent.Inventory.HasItem (Names.HealthKit))
+                            return StateType.Complete;
                     }
                 }
                 // If we can't then return to a default state.
                 else
                 {
-                    Debug.Log ("Can't see shit boss: " + agent.name);
-                    agent.Brain.ChangeState (new State_Wander ());
+                    return StateType.Failed;
                 }
             }
+
+            return StateType.Active;
         }
 
-        private bool IsInRange (AI agent)
+        private bool IsInSightRange (AI agent)
         {
             const float range = 3.0f;
 
@@ -95,5 +102,7 @@ namespace Assets.Scripts.AI_System.States
         {
             return false;
         }
+
+        public void AddSubState (IState<AI> subState) { throw new NotImplementedException (); }
     }
 }

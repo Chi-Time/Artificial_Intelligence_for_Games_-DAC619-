@@ -12,7 +12,7 @@ namespace Assets.Scripts.AI_System
         bool HandleMessage (Message message);
     }
 
-    /// <summary>Compares two telegrams by their message delay length.</summary>
+    /// <summary>Compares two messages by their message delay length.</summary>
     public class ByDelayTime : IComparer<Message>
     {
         public int Compare (Message x, Message y)

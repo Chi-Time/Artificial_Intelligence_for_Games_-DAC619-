@@ -106,7 +106,8 @@ public class AI : MonoBehaviour
     {
         Brain.SetGlobalState (GetGlobalState ());
         Brain.SetCurrentState (new State_Wander ());
-        Brain.ChangeState (new State_AttackEnemy ());
+
+        Data.CurrentHitPoints = 8;
     }
 
     private IState<AI> GetGlobalState ()

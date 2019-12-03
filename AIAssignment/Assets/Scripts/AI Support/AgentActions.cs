@@ -224,6 +224,7 @@ public class AgentActions : MonoBehaviour
                     {
                         actualDamage *= _agentData.PowerUpAmount;
                     }
+
                     target.GetComponent<AgentData>().TakeDamage(actualDamage);
                 }
             }

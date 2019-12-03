@@ -17,7 +17,7 @@ namespace Assets.Scripts.AI_System.States
             _Timer = _DirectionDelay;
         }
 
-        public void Process (AI agent)
+        public StateType Process (AI agent)
         {
             Log.ProcessingState ("Wander", agent);
 
@@ -26,7 +26,11 @@ namespace Assets.Scripts.AI_System.States
             if (CanChangeDirection ())
             {
                 ChangeDirection (agent);
+
+                return StateType.Active;
             }
+
+            return StateType.Active;
         }
 
         private void CalculateTimer ()
@@ -62,5 +66,7 @@ namespace Assets.Scripts.AI_System.States
         {
             return false;
         }
+
+        public void AddSubState (IState<AI> subState) { throw new System.NotImplementedException (); }
     }
 }

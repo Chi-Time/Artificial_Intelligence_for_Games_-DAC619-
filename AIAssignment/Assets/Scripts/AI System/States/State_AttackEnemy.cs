@@ -29,17 +29,19 @@ namespace Assets.Scripts.AI_System.States
             }
         }
 
-        public void Process (AI agent)
+        public StateType Process (AI agent)
         {
             Log.ProcessingState ("AttackEnemy", agent);
 
             if (_Enemy == null)
             {
                 agent.Brain.ChangeState (new State_Wander ());
-                return;
+                return StateType.Failed;
             }
 
             agent.Actions.AttackEnemy (_Enemy.gameObject);
+
+            return StateType.Active;
         }
 
         public void Exit (AI agent)
@@ -51,5 +53,7 @@ namespace Assets.Scripts.AI_System.States
         {
             return false;
         }
+
+        public void AddSubState (IState<AI> subState) { throw new System.NotImplementedException (); }
     }
 }

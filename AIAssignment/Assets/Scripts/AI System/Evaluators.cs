@@ -39,7 +39,7 @@ namespace Assets.Scripts.AI_System
             {
                 float tweaker = 1.0f;
 
-                float desirability = ( tweaker * Aspirations.Evaluator_Health (agent) ) * ( 1 - Aspirations.Evaluator_DistanceToObject (agent, enemiesInView[0]) ) * Aspirations.Evaluator_Strength (agent);
+                float desirability = ( tweaker * GlobalEvaluators.Evaluator_Health (agent) ) * ( 1 - GlobalEvaluators.Evaluator_DistanceToObject (agent, enemiesInView[0]) ) * GlobalEvaluators.Evaluator_Strength (agent);
 
                 return Mathf.Clamp (desirability, 0.0f, 1.0f);
             }
@@ -66,7 +66,7 @@ namespace Assets.Scripts.AI_System
                 return 0.0f;
 
             // Get the distance from here to the health item.
-            float distance = Aspirations.Evaluator_DistanceToObject (agent, healthItem);
+            float distance = GlobalEvaluators.Evaluator_DistanceToObject (agent, healthItem);
 
             // If the distance is greater than 1 then returon 0 as this goal isn't desirable.
             if (distance >= 1)
@@ -76,14 +76,14 @@ namespace Assets.Scripts.AI_System
             const float tweaker = 0.2f;
 
             // Calculate the desirablity of getting the health item and clamp it.
-            float desirability = tweaker * ( 1 - Aspirations.Evaluator_Health (agent) ) / distance;
+            float desirability = tweaker * ( 1 - GlobalEvaluators.Evaluator_Health (agent) ) / distance;
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
         public IState<AI> GetState ()
         {
-            return new State_GetHealthKit ();
+            return new CompState_Heal ();
         }
     }
 }
