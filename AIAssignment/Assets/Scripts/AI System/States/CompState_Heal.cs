@@ -8,6 +8,7 @@ namespace Assets.Scripts.AI_System.States
 {
     class CompState_Heal : CompositeState<AI>
     {
+        //TODO: Find a way to process failures in the global state as currently when thinks fail nothing happens.
         public override void Enter (AI agent)
         {
             //TODO: Find a better way to set the current state as having to place this code before the base call is just error prone.

@@ -7,6 +7,9 @@ public static class Names
     public const string PowerUp = "Power Up";
     public const string HealthKit = "Health Kit";
 
+    public const string PowerupSpawner = "PowerupSpawner";
+    public const string HealthKitSpawner = "HealthKitSpawner";
+
     public const string BlueFlag = "Blue Flag";
     public const string RedFlag = "Red Flag";
 
@@ -41,6 +44,8 @@ public static class AISystem
     public const float GlobalDelay = 0.5f;
     /// <summary>The delay to use for processing current state logic.</summary>
     public const float CurrentDelay = 0.5f;
+    /// <summary>The length of time (in seconds) that object persists in an agent's memory.</summary>
+    public const float TargetMemoryLength = 2.0f;
     /// <summary>The bias value to use when weighting normal bots.</summary>
     public const float NormalCharacterBias = .5f;
     /// <summary>The bias to use when weighting cowardly bots.</summary>

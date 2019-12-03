@@ -34,8 +34,6 @@ namespace Assets.Scripts.AI_System.States
             {
                 //Calculate the desirability of the current task.
                 float desirability = evaluator.CalculateDesirability (agent);
-                
-                Log.Desirability (desirability, agent);
 
                 // If the desirability of this given evaluator is higher than a previous.
                 if (desirability >= bestDesirability)
@@ -47,7 +45,7 @@ namespace Assets.Scripts.AI_System.States
             }
 
             // Grab the desired state from our best evaluator.
-            var desiredState = bestEvaluator.GetState ();
+            var desiredState = bestEvaluator.GetState (agent);
 
             // Check to see if we are already in the desired state. If we're not, then switch to the newly desired state.
             if (agent.Brain.IsInState (desiredState) == false)

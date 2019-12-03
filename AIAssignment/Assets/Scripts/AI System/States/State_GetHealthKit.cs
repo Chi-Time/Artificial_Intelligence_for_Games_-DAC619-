@@ -10,36 +10,29 @@ namespace Assets.Scripts.AI_System.States
     class State_GetHealthKit : IState<AI>
     {
         private GameObject _HealthKit = null;
-        private GameObject _HealthKitSpawner = null;
 
         public void Enter (AI agent)
         {
             Log.EnteredState ("GetHealthKit", agent);
 
-            if (_HealthKitSpawner == null)
+            if (WorldManager.Instance.HealthKitSpawner == null)
             {
-                _HealthKitSpawner = GameObject.Find ("HealthKitSpawner");
-
-                if (_HealthKitSpawner == null)
-                {
-                    Debug.LogError ("Health Kit Spawner Could Not Be Found!!");
-                    agent.Brain.ChangeState (new State_Wander ());
-                }
+                Debug.LogError ("Health Kit Spawner Could Not Be Found!!");
+                agent.Brain.ChangeState (new State_Wander ());
             }
         }
 
         public StateType Process (AI agent)
         {
-            // Check to see if the kit still exists in the world.
-            if (_HealthKitSpawner == null)
+            // Check to see if the location still exists in the world.
+            if (WorldManager.Instance.HealthKitSpawner == null)
             {
-                // If it doesn't then go back to an idle state.
-                agent.Brain.ChangeState (new State_Wander ());
+                // If it doesn't then we failed.
                 return StateType.Failed;
             }
 
             // Move towards the health kit.
-            agent.Actions.MoveTo (_HealthKitSpawner);
+            agent.Actions.MoveTo (WorldManager.Instance.HealthKitSpawner);
 
             // Are we in range for seeing the kit?
             if (IsInSightRange (agent))
@@ -76,7 +69,7 @@ namespace Assets.Scripts.AI_System.States
         {
             const float range = 3.0f;
 
-            if (Vector3.Distance (agent.transform.position, _HealthKitSpawner.transform.position) < range)
+            if (Vector3.Distance (agent.transform.position, WorldManager.Instance.HealthKitSpawner.transform.position) < range)
                 return true;
 
             return false;

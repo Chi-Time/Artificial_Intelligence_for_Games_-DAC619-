@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Assets.Scripts.AI_System;
 
 /// <summary>
 /// Handles the AI agents sensory suite, uses OverlapSphereNonAlloc to detect objects in view range,
@@ -16,6 +18,10 @@ public class Sensing : MonoBehaviour
     private AgentData _agentData;
 
     private const int MaxObjectsInView = 10;
+    // The maximum number of objects which the short term memory can recall.
+    private const int MaxObjectsInMemory = 5;
+    // The length in seconds that an object will persist in memory for.
+    private const float MemoryLength = 7.5f;
 
     // Masks to limit visibility
     public LayerMask VisibleToAiMask;
@@ -28,16 +34,36 @@ public class Sensing : MonoBehaviour
         get { return _objectsPercieved; }
     }
 
-    // Use this for initialization
-    void Awake()
-    {
-        _agentData = GetComponentInParent<AgentData>();
-    }
-
     // _overlapResults is returned by the sphere overlap function
     private Collider[] _overlapResults = new Collider[MaxObjectsInView];
     // _objects in view is the list of objects not obstructed (and not ourself)
     private List<GameObject> _objectsInView = new List<GameObject>(MaxObjectsInView);
+    // short term memory is the lust of objects not obstructed which we recall seeing.
+    private CustomQueue<GameObject> _shortTermMemory = new CustomQueue<GameObject> ();
+
+    // Use this for initialization
+    void Awake ()
+    {
+        _agentData = GetComponentInParent<AgentData> ();
+    }
+
+    private void Start ()
+    {
+        StartCoroutine (UpdateShortTermMemory ());
+    }
+
+    // Update short term memory and remove the earliest object we remember from memory.
+    private IEnumerator UpdateShortTermMemory ()
+    {
+        // If there are still things in memory, remove the earliest one.
+        if (_shortTermMemory.Count > 0)
+            _shortTermMemory.Dequeue ();
+
+        yield return new WaitForSeconds (MemoryLength);
+
+        // Call this again after our memory length has warranted a new removal.
+        StartCoroutine (UpdateShortTermMemory ());
+    }
 
     /// <summary>
     /// This updates the objectsPercievecd list by calling OverlapSphereNonAlloc with the mask selecting only
@@ -65,6 +91,27 @@ public class Sensing : MonoBehaviour
                 {
                     // We can see it
                     _objectsInView.Add(_overlapResults[i].gameObject);
+
+                    //// Loop through the memory and ensure the object isn't already within memory.
+                    //foreach (GameObject go in _shortTermMemory)
+                    //{
+                    //    if (go == _overlapResults[i].gameObject)
+                    //    {
+                    //        _shortTermMemory.
+                    //    }
+
+                    //    // If there is still room in our short term memory then add it.
+                    //    if (_shortTermMemory.Count <= MaxObjectsInMemory - 1)
+                    //    {
+                    //        _shortTermMemory.Enqueue (_overlapResults[i].gameObject);
+                    //    }
+                    //    // If there isn't then remove an earlier known object and add it.
+                    //    else
+                    //    {
+                    //        _shortTermMemory.Dequeue ();
+                    //        _shortTermMemory.Enqueue (_overlapResults[i].gameObject);
+                    //    }
+                    //}
                 }
             }
         }

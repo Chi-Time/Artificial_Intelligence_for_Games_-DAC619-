@@ -1,0 +1,78 @@
+Figure out how to add sub states through messages
+EX: Wants to call for help adds substate call for help to current composite
+
+Don't let AI go backwards from base to get health.
+
+C_Goal GetFlag
+ - A_Goal FindFlag
+ - A_Goal CollectFlag
+
+C_Goal ReturnFlag
+ - A_Goal ReturnToBase
+  - Check if hurt enough to signal team.
+  - OR: Check to see if message has come in for new sub state.
+ - A_Goal ScoreFlag
+
+C_Goal GetFlagFromEnemy
+ - A_Goal AttackEnemy
+ - A_Goal CollectFlag
+
+C_Goal DefendFlagBearer
+ - A_Goal MoveTowardTeammate
+ - A_Goal AttackEnemy
+
+A_Goal ReturnToBase
+ - Tell the AI to Head Home
+
+A_Goal FindFlag
+ - Check if team already has flag
+  - If they do quit
+ - Check if teammate recently died with flag
+  - Head to teammate position
+ - Head toward enemy base
+
+A_Goal ScoreFlag
+ - Use the flag on the home base
+
+A_Goal AttackEnemy
+ - Check if enemy is in view
+ - Fight them 
+ - If they're dead
+  - Action Completed
+
+A_Goal SignalFlagSwap
+ - Inform Team that you want to swap flag
+
+A_Goal ReturnFlagSwapSignal
+ - Inform teammate who asked your response
+
+A_Goal CollectFlag
+ - If flag is in sight
+ - Pick it up
+  - If not close enough
+  - Keep moving toward it.
+
+A_Goal GiveFlagToTeamate
+ - When teammate is in sight and is close enough
+ - Drop Flag
+ - Signal teammate that flag has been dropped.
+
+A_Goal MoveTowardTeammate
+ - Moves toward the teammate specified.
+
+A_Goal Flee
+ - Retreat
+
+AI gives health kit to teammate who needs it.
+
+Flanking Behaviour - Cool idea probably not likely
+
+Camp Enemy Spawn/Location
+
+Patrol Home Base/Flag
+Add in team mate enemy spotting. EX: team mate sees enemy, sends message to others of their position at that time.
+
+A_Goal GuardFlag
+ - Random Wander within a fixed distance of the flag
+
+$Evaluate it based on team mates location to the flag and last known enemy position in relation to flag. Own character bias etc.

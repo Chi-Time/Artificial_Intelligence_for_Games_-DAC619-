@@ -6,46 +6,39 @@ using UnityEngine;
 
 namespace Assets.Scripts.AI_System.States
 {
+    //TODO: Add in current state for each goal so that we can determine if they have passed or failed.
     class State_AttackEnemy : IState<AI>
     {
-        private AI _Enemy = null;
+        private GameObject _Target = null;
+
+        public State_AttackEnemy (GameObject target)
+        {
+            this._Target = target;
+        }
 
         public void Enter (AI agent)
         {
             Log.EnteredState ("AttackEnemy", agent);
-
-            var enemiesInSight = agent.Senses.GetEnemiesInView ();
-
-            if (enemiesInSight.Count > 0)
-            {
-                _Enemy = enemiesInSight[Random.Range (0, enemiesInSight.Count)].GetComponent<AI> ();
-
-                if (_Enemy == null)
-                    agent.Brain.ChangeState (new State_Wander ());
-            }
-            else
-            {
-                agent.Brain.ChangeState (new State_Wander ());
-            }
         }
 
         public StateType Process (AI agent)
         {
             Log.ProcessingState ("AttackEnemy", agent);
 
-            if (_Enemy == null)
+            //TODO: Determine if enemy was killed or lost from sight.
+            if (agent.Targeting.IsTargetPresent () == false)
             {
                 agent.Brain.ChangeState (new State_Wander ());
                 return StateType.Failed;
             }
 
-            if (agent.Senses.IsInAttackRange (_Enemy.gameObject))
+            if (agent.Senses.IsInAttackRange (_Target))
             {
-                agent.Actions.AttackEnemy (_Enemy.gameObject);
+                agent.Actions.AttackEnemy (_Target);
             }
             else
             {
-                agent.Actions.MoveTo (_Enemy.gameObject);
+                agent.Actions.MoveTo (_Target);
             }
 
             return StateType.Active;

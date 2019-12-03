@@ -89,10 +89,13 @@ public class AI : MonoBehaviour
     // e.g. agentScript.MoveTo(enemy);
     public AgentActions Actions { get; private set; }
     public StateMachine<AI> Brain { get; private set; }
+    public TargetingSystem Targeting { get; private set; }
 
     private void Awake ()
     {
+        // Initialise agent systems.
         Brain = new StateMachine<AI> (this);
+        Targeting = new TargetingSystem (this);
 
         // Initialise the accessable script components
         Data = GetComponent<AgentData> ();
@@ -116,7 +119,7 @@ public class AI : MonoBehaviour
 
         globalState.AddEvaluator (new Evaluator_AttackEnemy ());
         globalState.AddEvaluator (new Evaluator_Wander ());
-        globalState.AddEvaluator (new Evaluator_GetHealthKit ());
+        globalState.AddEvaluator (new Evaluator_Heal ());
 
         return globalState;
     }
