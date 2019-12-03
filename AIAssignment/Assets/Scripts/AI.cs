@@ -110,7 +110,7 @@ public class AI : MonoBehaviour
         Brain.SetGlobalState (GetGlobalState ());
         Brain.SetCurrentState (new State_Wander ());
 
-        Data.CurrentHitPoints = 8;
+        //Data.CurrentHitPoints = UnityEngine.Random.Range (25, 100);
     }
 
     private IState<AI> GetGlobalState ()

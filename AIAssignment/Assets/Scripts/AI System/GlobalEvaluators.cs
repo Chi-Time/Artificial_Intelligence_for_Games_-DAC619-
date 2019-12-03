@@ -24,14 +24,19 @@ namespace Assets.Scripts.AI_System
 
             float desirability = Helpers.GetDistribution (distance, minDistance, maxDistance);
 
-            return UtilityCurves.Exponential.Evaluate (desirability);
+            //Debug.Log ("Distance Utility: " + UtilityCurves.Linear.Evaluate (desirability));
+
+            return UtilityCurves.Linear.Evaluate (desirability);
         }
 
         public static float Evaluator_Health (AI agent)
         {
             float desirability = Helpers.GetDistribution (agent.Data.CurrentHitPoints, 0.0f, agent.Data.MaxHitPoints);
 
-            return UtilityCurves.Linear.Evaluate (desirability);
+            //Debug.Log ("Health Utility: " + UtilityCurves.Logistic.Evaluate (desirability));
+
+            // Use a sigmoid logistic curve to get the overall desirability for health.
+            return desirability;
         }
 
         public static float Evaluator_Strength (AI agent)
@@ -53,6 +58,8 @@ namespace Assets.Scripts.AI_System
 
             damage *= tweaker;
             desirability = Helpers.GetDistribution (damage, 0, 20);
+
+            //Debug.Log ("Strength Utility: " + desirability);
             return desirability;
         }
     }

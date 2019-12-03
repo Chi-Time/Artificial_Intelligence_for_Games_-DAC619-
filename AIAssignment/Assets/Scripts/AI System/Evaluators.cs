@@ -39,7 +39,7 @@ namespace Assets.Scripts.AI_System
             {
                 float tweaker = 1.0f;
 
-                float desirability = ( tweaker * GlobalEvaluators.Evaluator_Health (agent) ) * ( 1 - GlobalEvaluators.Evaluator_DistanceToObject (agent, enemiesInView[0]) ) * GlobalEvaluators.Evaluator_Strength (agent);
+                float desirability = tweaker * ((GlobalEvaluators.Evaluator_Health (agent)) ) * ( 1 - GlobalEvaluators.Evaluator_DistanceToObject (agent, enemiesInView[0]) ) * GlobalEvaluators.Evaluator_Strength (agent);
 
                 desirability = Mathf.Clamp (desirability, 0.0f, 1.0f);
 
@@ -47,7 +47,8 @@ namespace Assets.Scripts.AI_System
                 return desirability;
             }
 
-            Log.Desirability ("AttackEnemy", 0.0f, agent);
+            //Log.Desirability ("AttackEnemy", 0.0f, agent);
+
             // No enemies are in sight so this goal isn't desirable.
             return 0.0f;
         }
@@ -72,21 +73,24 @@ namespace Assets.Scripts.AI_System
 
             // Get the distance from here to the health item.
             float distance = GlobalEvaluators.Evaluator_DistanceToObject (agent, healthItem);
+            // Get the health using a sigmoid logistic curve.
+            float health = UtilityCurves.Logistic.Evaluate (GlobalEvaluators.Evaluator_Health (agent));
 
             // If the distance is greater than 1 then returon 0 as this goal isn't desirable.
             if (distance >= 1)
                 return 0.0f;
 
             // Tweaker value for adjusting the curve.
-            const float tweaker = 0.2f;
+            const float tweaker = .05f;
 
             // Calculate the desirablity of getting the health item and clamp it.
-            float desirability = tweaker * ( 1 - GlobalEvaluators.Evaluator_Health (agent) ) / distance;
+            float desirability = tweaker * (( 1 - GlobalEvaluators.Evaluator_Health (agent) ) / distance);
+
             desirability = Mathf.Clamp (desirability, 0.0f, 1.0f);
 
-            Log.Desirability ("Heal", UtilityCurves.Logistic.Evaluate (desirability), agent);
-            // Use a sigmoid logistic curve to get the overall desirability for healing.
-            return UtilityCurves.Logistic.Evaluate (desirability);
+            Log.Desirability ("Heal", desirability, agent);
+
+            return desirability;
         }
 
         public IState<AI> GetState (AI agent)
