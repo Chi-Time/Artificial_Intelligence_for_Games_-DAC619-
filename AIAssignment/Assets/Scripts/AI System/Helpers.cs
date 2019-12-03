@@ -9,6 +9,31 @@ namespace Assets.Scripts.AI_System
 {
     public enum ColorTypes { Red, Yellow, Blue, Cyan, Green, Pink, Purple, White, Black, Orange }
 
+    class Helpers
+    {
+        /// <summary>Normalise a given value within the defined range.</summary>
+        /// <param name="value">The value to normalise.</param>
+        /// <param name="min">The minimum extent of the range.</param>
+        /// <param name="max">The maximum extent of the range.</param>
+        /// <returns>A nornalised value between the given range.</returns>
+        public static float Normalise (float value, float min, float max)
+        {
+            return ( value - min ) / ( max - min );
+        }
+
+        /// <summary>Normalise a given value within the given range and then clamp it to either end.</summary>
+        /// <param name="value">The value to normalise and clamp.</param>
+        /// <param name="min">The minimum extent of the range.</param>
+        /// <param name="max">The maximum extent of the range.</param>
+        /// <returns>A normalised and clamped float between the given range.</returns>
+        public static float GetDistribution (float value, float min, float max)
+        {
+            float normalisedValue = Normalise (value, min, max);
+
+            return Mathf.Clamp (normalisedValue, 0.0f, 1.0f);
+        }
+    }
+
     public static class Log
     {
         public static void Desirability (float desirablity, AI agent)
