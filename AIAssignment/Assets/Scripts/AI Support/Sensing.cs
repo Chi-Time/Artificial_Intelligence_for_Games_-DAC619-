@@ -38,31 +38,11 @@ public class Sensing : MonoBehaviour
     private Collider[] _overlapResults = new Collider[MaxObjectsInView];
     // _objects in view is the list of objects not obstructed (and not ourself)
     private List<GameObject> _objectsInView = new List<GameObject>(MaxObjectsInView);
-    // short term memory is the lust of objects not obstructed which we recall seeing.
-    private CustomQueue<GameObject> _shortTermMemory = new CustomQueue<GameObject> ();
 
     // Use this for initialization
     void Awake ()
     {
         _agentData = GetComponentInParent<AgentData> ();
-    }
-
-    private void Start ()
-    {
-        StartCoroutine (UpdateShortTermMemory ());
-    }
-
-    // Update short term memory and remove the earliest object we remember from memory.
-    private IEnumerator UpdateShortTermMemory ()
-    {
-        // If there are still things in memory, remove the earliest one.
-        if (_shortTermMemory.Count > 0)
-            _shortTermMemory.Dequeue ();
-
-        yield return new WaitForSeconds (MemoryLength);
-
-        // Call this again after our memory length has warranted a new removal.
-        StartCoroutine (UpdateShortTermMemory ());
     }
 
     /// <summary>
@@ -92,28 +72,24 @@ public class Sensing : MonoBehaviour
                     // We can see it
                     _objectsInView.Add(_overlapResults[i].gameObject);
 
-                    //// Loop through the memory and ensure the object isn't already within memory.
-                    //foreach (GameObject go in _shortTermMemory)
-                    //{
-                    //    if (go == _overlapResults[i].gameObject)
-                    //    {
-                    //        _shortTermMemory.
-                    //    }
-
-                    //    // If there is still room in our short term memory then add it.
-                    //    if (_shortTermMemory.Count <= MaxObjectsInMemory - 1)
-                    //    {
-                    //        _shortTermMemory.Enqueue (_overlapResults[i].gameObject);
-                    //    }
-                    //    // If there isn't then remove an earlier known object and add it.
-                    //    else
-                    //    {
-                    //        _shortTermMemory.Dequeue ();
-                    //        _shortTermMemory.Enqueue (_overlapResults[i].gameObject);
-                    //    }
-                    //}
+                    // Update the last known positions of any flags if we've seen them.
+                    UpdateFlagPositions ();
                 }
             }
+        }
+    }
+
+    /// <summary>Updates the world manager with the last known flag positions as they've been spotted.</summary>
+    private void UpdateFlagPositions ()
+    {
+        // Check if any of the objects we've seen are flags.
+        foreach (GameObject obj in _objectsInView)
+        {
+            // If they are, then update their last known position.
+            if (obj.name == Names.BlueFlag)
+                WorldManager.Instance.BlueFlagLastPosition = obj.transform.position;
+            else if (obj.name == Names.RedFlag)
+                WorldManager.Instance.RedFlagLastPosition = obj.transform.position;
         }
     }
 
@@ -188,9 +164,10 @@ public class Sensing : MonoBehaviour
     {
         if (item != null)
         {
+            var flagsInView = GetObjectsInViewByTag (Tags.Flag);
             var collectablesInView = GetCollectablesInView ();
 
-            if (collectablesInView.Count > 0)
+            if (collectablesInView.Count > 0 || flagsInView.Count > 0)
             {
                 if (Vector3.Distance (gameObject.transform.parent.position, item.transform.position) < _agentData.PickUpRange)
                 {
