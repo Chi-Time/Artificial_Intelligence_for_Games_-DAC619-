@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts.AI_System;
 
 /// <summary>
 /// Updates the score when the enemy flag is dropped inside the friendly base
@@ -9,8 +10,8 @@ using UnityEngine.UI;
 /// </summary>
 public class SetScore : MonoBehaviour
 {
-    public GameObject EnemyFlag;
     public int Score;
+    public GameObject EnemyFlag;
 
     private bool _enemyFlagInBase;
     private const float ScoreTickDuration = 1.0f;
@@ -21,11 +22,20 @@ public class SetScore : MonoBehaviour
     /// <param name="other">the collidee</param>
     void OnTriggerEnter(Collider other)
     {
-        // Only react to the enemy flag
-        if(other.gameObject.name.Equals(EnemyFlag.name))
+        if (this.gameObject.name.Equals (Names.BlueBase) && other.gameObject.name.Equals (Names.BlueFlag))
+        {
+            WorldManager.Instance.IsBlueFlagInHome = true;
+        }
+        else if (this.gameObject.name.Equals (Names.RedBase) && other.gameObject.name.Equals (Names.RedFlag))
+        {
+            WorldManager.Instance.IsRedFlagInHome = true;
+        }
+
+        // React to the enemy flag
+        if (other.gameObject.name.Equals (EnemyFlag.name))
         {
             _enemyFlagInBase = true;
-            StartCoroutine(UpdateScore());
+            StartCoroutine (UpdateScore ());
         }
     }
 
@@ -35,10 +45,19 @@ public class SetScore : MonoBehaviour
     /// <param name="other"></param>
     void OnTriggerExit(Collider other)
     {
-        // only react to the enemy flag
+        // React to the enemy flag
         if (other.gameObject.name.Equals(EnemyFlag.name))
         {
             _enemyFlagInBase = false;
+        }
+
+        if (this.gameObject.name.Equals (Names.BlueBase) && other.gameObject.name.Equals (Names.BlueFlag))
+        {
+            WorldManager.Instance.IsBlueFlagInHome = false;
+        }
+        else if (this.gameObject.name.Equals (Names.RedBase) && other.gameObject.name.Equals (Names.RedFlag))
+        {
+            WorldManager.Instance.IsRedFlagInHome = false;
         }
     }
 
