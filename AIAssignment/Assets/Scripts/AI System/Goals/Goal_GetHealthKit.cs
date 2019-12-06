@@ -5,30 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.AI_System.States
+namespace Assets.Scripts.AI_System.Goals
 {
-    class State_GetHealthKit : IState<AI>
+    class Goal_GetHealthKit : IGoal<AI>
     {
+        public GoalState CurrentState { get; private set; }
+
         private GameObject _HealthKit = null;
 
         public void Enter (AI agent)
         {
             Log.EnteredState ("GetHealthKit", agent);
 
-            if (WorldManager.Instance.HealthKitSpawner == null)
-            {
-                Debug.LogError ("Health Kit Spawner Could Not Be Found!!");
-                agent.Brain.ChangeState (new State_Wander ());
-            }
+            CurrentState = GoalState.Inactive;
         }
 
-        public StateType Process (AI agent)
+        public GoalState Process (AI agent)
         {
             // Check to see if the location still exists in the world.
             if (WorldManager.Instance.HealthKitSpawner == null)
             {
                 // If it doesn't then we failed.
-                return StateType.Failed;
+                return CurrentState = GoalState.Failed;
             }
 
             // Move towards the health kit.
@@ -52,17 +50,17 @@ namespace Assets.Scripts.AI_System.States
 
                         // Check if we collected, if we did then return that we did our job.
                         if (agent.Inventory.HasItem (Names.HealthKit))
-                            return StateType.Complete;
+                            return CurrentState = GoalState.Complete;
                     }
                 }
                 // If we can't then return to a default state.
                 else
                 {
-                    return StateType.Failed;
+                    return CurrentState = GoalState.Failed;
                 }
             }
 
-            return StateType.Active;
+            return CurrentState = GoalState.Active;
         }
 
         private bool IsInSightRange (AI agent)
@@ -96,6 +94,6 @@ namespace Assets.Scripts.AI_System.States
             return false;
         }
 
-        public void AddSubState (IState<AI> subState) { throw new NotImplementedException (); }
+        public void AddSubGoal (IGoal<AI> subState) { throw new NotImplementedException (); }
     }
 }

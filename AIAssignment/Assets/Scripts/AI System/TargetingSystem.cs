@@ -70,12 +70,10 @@ namespace Assets.Scripts.AI_System
             return false;
         }
 
+        /// <summary>Selects a target based on proximity to agent and other factors.</summary>
+        /// <returns></returns>
         public GameObject SelectTarget ()
         {
-            // If there is still a target selected then just return him.
-            if (CurrentTarget != null)
-                return CurrentTarget;
-
             // Find all enemies in view.
             var enemiesInView = _Agent.Senses.GetEnemiesInView ();
 
@@ -83,8 +81,8 @@ namespace Assets.Scripts.AI_System
             if (enemiesInView.Count > 0)
             {
                 // Consider tracking how many times we've died by or killed an enemy and factor that into the equation.
-                float shortestDistance = 100.0f;
                 GameObject bestTarget = null;
+                float shortestDistance = 100.0f;
 
                 foreach (GameObject enemy in enemiesInView)
                 {

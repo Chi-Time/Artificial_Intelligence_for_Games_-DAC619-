@@ -4,41 +4,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts.AI_System.States
+namespace Assets.Scripts.AI_System.Goals
 {
-    class State_UseHealthKit : IState<AI>
+    class Goal_UseHealthKit : IGoal<AI>
     {
-        public void AddSubState (IState<AI> subState) { }
+        public GoalState CurrentState { get; private set; }
 
         public void Enter (AI agent)
         {
             Log.EnteredState ("UseHealthKit", agent);
+
+            CurrentState = GoalState.Inactive;
         }
 
-        public StateType Process (AI agent)
+        public GoalState Process (AI agent)
         {
             Log.ProcessingState ("UseHealthKit", agent);
 
             if (agent.Inventory.HasItem (Names.HealthKit))
             {
-                UnityEngine.Debug.Log ("I have it.");
                 var item = agent.Inventory.GetItem (Names.HealthKit);
                 agent.Actions.UseItem (item);
 
-                return StateType.Complete;
+                return CurrentState = GoalState.Complete;
             }
-
-            return StateType.Active;
+            else
+            {
+                return CurrentState = GoalState.Failed;
+            }
         }
 
         public void Exit (AI agent)
         {
             Log.ExitedState ("UseHealthKit", agent);
+
+            CurrentState = GoalState.Inactive;
         }
 
         public bool HandleMessage (Message message)
         {
             return false;
         }
+
+        public void AddSubGoal (IGoal<AI> subState) { }
     }
 }

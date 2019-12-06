@@ -32,6 +32,14 @@ namespace Assets.Scripts.AI_System
 
             return Mathf.Clamp (normalisedValue, 0.0f, 1.0f);
         }
+
+        public static bool IsNearPosition (Vector3 a, Vector3 b, float distance)
+        {
+            if (Vector3.Distance (a, b) <= distance)
+                return true;
+
+            return false;
+        }
     }
 
     public static class Log
@@ -63,7 +71,7 @@ namespace Assets.Scripts.AI_System
 
         public static void State (string stateName, string stateValue, ColorTypes color, AI agent)
         {
-            //Debug.Log ($"<Color={ColorTypes.White}>State_{stateName}:</color> <color={color.ToString ()}> {stateValue} </color>| {agent}");
+            Debug.Log ($"<Color={ColorTypes.White}>State_{stateName}:</color> <color={color.ToString ()}> {stateValue} </color>| {agent}");
         }
     }
 

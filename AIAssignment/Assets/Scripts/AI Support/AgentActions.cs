@@ -59,6 +59,21 @@ public class AgentActions : MonoBehaviour
         return false;
     }
 
+    /// <summary>Checks if the agent is at or close to its destination</summary>
+    /// <param name="distance">The distance between the agent and the rest of it's pass.</param>
+    /// <returns>True if the agent is close.</returns>
+    public bool HasArrived (float distance)
+    {
+        return _navAgent.remainingDistance < distance ? true : false;
+    }
+
+    /// <summary>Checks if the agent is at its destination</summary>
+    /// <returns>True if the agent is at the location.</returns>
+    public bool HasArrived ()
+    {
+        return Mathf.Approximately (_navAgent.remainingDistance, 0.0f) ? true : false;
+    }
+
     /// <summary>
     /// Move towards the position of the target object
     /// </summary>
@@ -123,11 +138,14 @@ public class AgentActions : MonoBehaviour
     {
         if (item != null)
         {
+            Debug.Log ("there's an item there");
             if (_agentSenses.IsItemInReach(item))
             {
+                Debug.Log ("Item's in reach");
                 // If its collectable add it to the inventory
                 if (item.GetComponent<Collectable>() != null)
                 {
+                    Debug.Log ("Yeah I'm grabbing that");
                     item.GetComponent<Collectable>().Collect(_agentData);
                     _agentInventory.AddItem(item);
                 }

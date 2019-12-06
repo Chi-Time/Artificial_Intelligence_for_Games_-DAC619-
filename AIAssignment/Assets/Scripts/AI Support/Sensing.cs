@@ -20,8 +20,6 @@ public class Sensing : MonoBehaviour
     private const int MaxObjectsInView = 10;
     // The maximum number of objects which the short term memory can recall.
     private const int MaxObjectsInMemory = 5;
-    // The length in seconds that an object will persist in memory for.
-    private const float MemoryLength = 7.5f;
 
     // Masks to limit visibility
     public LayerMask VisibleToAiMask;

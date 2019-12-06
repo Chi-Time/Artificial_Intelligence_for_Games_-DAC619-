@@ -11,14 +11,21 @@ namespace Assets.Scripts.AI_System
     {
         public static WorldManager Instance { get; private set; }
 
+        public bool IsRedFlagInHome { get; set; }
+        public bool IsBlueFlagInHome { get; set; }
+        public bool IsRedFlagCaptured { get; set; }
+        public bool IsBlueFlagCaptured { get; set; }
         public GameObject RedFlag { get; private set; }
         public GameObject BlueFlag { get; private set; }
+        public Vector3 RedFlagLastPosition { get; set; }
+        public Vector3 BlueFlagLastPosition { get; set; }
         public GameObject RedBase { get; private set; }
         public GameObject BlueBase { get; private set; }
         public GameObject PowerupSpawner { get; private set; }
         public GameObject HealthKitSpawner { get; private set; }
-        public List<AI> RedTeamMembers { get; private set; }
-        public List<AI> BlueTeamMembers { get; private set; }
+        public HashSet<AI> RedTeamMembers { get; set; }
+        public HashSet<AI> BlueTeamMembers { get; set; }
+        public List<GameObject> ImportantLocations { get; private set; }
 
         private void Awake ()
         {
@@ -31,7 +38,6 @@ namespace Assets.Scripts.AI_System
         private void Start ()
         {
             FindObjects ();
-            FindTeams ();
         }
 
         private void FindObjects ()
@@ -42,56 +48,138 @@ namespace Assets.Scripts.AI_System
             BlueBase = GameObject.Find (Names.BlueBase);
             PowerupSpawner = GameObject.Find (Names.PowerupSpawner);
             HealthKitSpawner = GameObject.Find (Names.HealthKitSpawner);
+            RedTeamMembers = new HashSet<AI> ();
+            BlueTeamMembers = new HashSet<AI> ();
+
+            ImportantLocations = new List<GameObject> ();
+            ImportantLocations.Add (RedBase);
+            ImportantLocations.Add (BlueBase);
+            ImportantLocations.Add (PowerupSpawner);
+            ImportantLocations.Add (HealthKitSpawner);
         }
 
-        private void FindTeams ()
+        public void AddMemberToTeam (AI agent)
         {
-            var redTeam = GameObject.FindGameObjectsWithTag (Tags.RedTeam);
-            var blueTeam = GameObject.FindGameObjectsWithTag (Tags.BlueTeam);
-
-            foreach (GameObject member in redTeam)
-            {
-                if (member.GetComponent<AI> () != null)
-                    RedTeamMembers.Add (member.GetComponent<AI> ());
-            }
-
-            foreach (GameObject member in blueTeam)
-            {
-                if (member.GetComponent<AI> () != null)
-                    BlueTeamMembers.Add (member.GetComponent<AI> ());
-            }
+            if (agent.Data.CompareTag (Tags.BlueTeam))
+                BlueTeamMembers.Add (agent);
+            else if (agent.Data.CompareTag (Tags.RedTeam))
+                RedTeamMembers.Add (agent);
         }
 
-        private AI[] GetAllAgents ()
+        public void RemoveMemberFromTeam (AI agent)
         {
-            List<AI> agents = new List<AI> (6);
+            if (agent.Data.CompareTag (Tags.BlueTeam))
+                BlueTeamMembers.Remove (agent);
+            else if (agent.Data.CompareTag (Tags.RedTeam))
+                RedTeamMembers.Remove (agent);
+        }
+
+        public Vector3 GetLastKnownFlagPosition (string flagName)
+        {
+            if (flagName == Names.RedFlag)
+                return RedFlagLastPosition;
+            else if (flagName == Names.BlueFlag)
+                return BlueFlagLastPosition;
+
+            return Vector3.zero;
+        }
+
+        public bool IsTeamFlagHome (AI agent)
+        {
+            if (agent.Data.CompareTag (Tags.BlueTeam))
+            {
+                return IsBlueFlagInHome;
+            }
+            else if (agent.Data.CompareTag (Tags.RedTeam))
+            {
+                return IsRedFlagInHome;
+            }
+
+            return false;
+        }
+
+        public bool IsEnemyFlagCaptured (AI agent)
+        {
+            if (agent.Data.CompareTag (Tags.BlueTeam))
+            {
+                return IsRedFlagCaptured;
+            }
+            else if (agent.Data.CompareTag (Tags.RedTeam))
+            {
+                return IsBlueFlagCaptured;
+            }
+
+            return false;
+        }
+
+        public GameObject GetImportantLocation ()
+        {
+            var location = ImportantLocations[UnityEngine.Random.Range (0, ImportantLocations.Count)];
+
+            return location;
+        }
+
+        public AI[] GetAllAgents ()
+        {
+            AI[] agents = null;
 
             agents.Concat (RedTeamMembers);
             agents.Concat (BlueTeamMembers);
 
-            return agents.ToArray ();
+            return agents;
         }
 
-        private AI[] GetTeammates (AI agent)
+        public AI[] GetTeammates (AI agent)
         {
-            List<AI> teamMembers = null;
+            AI[] teamMembers = null;
 
             if (agent.tag == Tags.RedTeam)
             {
-                teamMembers = RedTeamMembers;
-                teamMembers.Remove (agent);
+                teamMembers = RedTeamMembers.ToArray ();
 
                 return teamMembers.ToArray ();
             }
             else if (agent.tag == Tags.BlueTeam)
             {
-                teamMembers = BlueTeamMembers;
-                teamMembers.Remove (agent);
+                teamMembers = BlueTeamMembers.ToArray ();
 
-                return teamMembers.ToArray ();
+                return teamMembers;
             }
 
             return null;
+        }
+
+        // TODO: Fix agents from just stopping and getting stuck in a location
+        // Not sure what's causing it but it's annoying.
+        // TODO: Make it so that grabbing enemy flag isn't always the first best plan.
+        public bool TeamHasFriendlyFlag (AI agent)
+        {
+            var teamMembers = GetTeammates (agent);
+
+            foreach (AI member in teamMembers)
+            {
+                if (member.Data.HasFriendlyFlag)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool TeamHasEnemyFlag (AI agent)
+        {
+            var teamMembers = GetTeammates (agent);
+
+            foreach (AI member in teamMembers)
+            {
+                if (member.Inventory.HasItem (agent.Data.EnemyFlagName))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

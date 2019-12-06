@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.AI_System;
-using Assets.Scripts.AI_System.States;
+using Assets.Scripts.AI_System.Goals;
 /*****************************************************************************************************************************
  * Write your core AI code in this file here. The private variable 'agentScript' contains all the agents actions which are listed
  * below. Ensure your code it clear and organised and commented.
@@ -88,13 +88,13 @@ public class AI : MonoBehaviour
     // This is the script containing the AI agents actions
     // e.g. agentScript.MoveTo(enemy);
     public AgentActions Actions { get; private set; }
-    public StateMachine<AI> Brain { get; private set; }
+    public GoalManager<AI> Brain { get; private set; }
     public TargetingSystem Targeting { get; private set; }
 
     private void Awake ()
     {
         // Initialise agent systems.
-        Brain = new StateMachine<AI> (this);
+        Brain = new GoalManager<AI> (this);
         Targeting = new TargetingSystem (this);
 
         // Initialise the accessable script components
@@ -107,21 +107,31 @@ public class AI : MonoBehaviour
     // Use this for initialization
     private void Start ()
     {
-        Brain.SetGlobalState (GetGlobalState ());
-        Brain.SetCurrentState (new State_Wander ());
+        Brain.SetGlobalGoal (GetGlobalGoal ());
+        Brain.SetCurrentGoal (new Goal_Search ());
+
+        WorldManager.Instance.AddMemberToTeam (this);
 
         //Data.CurrentHitPoints = UnityEngine.Random.Range (25, 100);
     }
 
-    private IState<AI> GetGlobalState ()
+    private IGoal<AI> GetGlobalGoal ()
     {
-        var globalState = new State_Globals ();
+        var globalGoal = new Goal_Globals ();
 
-        globalState.AddEvaluator (new Evaluator_AttackEnemy ());
-        globalState.AddEvaluator (new Evaluator_Wander ());
-        globalState.AddEvaluator (new Evaluator_Heal ());
+        globalGoal.AddEvaluator (new Evaluator_GetEnemyFlag ());
+        globalGoal.AddEvaluator (new Evaluator_ScoreEnemyFlag ());
+        globalGoal.AddEvaluator (new Evaluator_RetrieveLostFlag ());
+        globalGoal.AddEvaluator (new Evaluator_ScoreFriendlyFlag ());
+        globalGoal.AddEvaluator (new Evaluator_AttackEnemy ());
+        globalGoal.AddEvaluator (new Evaluator_Search ());
+        globalGoal.AddEvaluator (new Evaluator_GetPowerup ());
+        globalGoal.AddEvaluator (new Evaluator_UsePowerup ());
+        globalGoal.AddEvaluator (new Evaluator_Heal ());
+        //globalGoal.AddEvaluator (new Evaluator_GuardEnemyFlag ());
+        //globalGoal.AddEvaluator (new Evaluator_GuardFriendlyFlag ());
 
-        return globalState;
+        return globalGoal;
     }
 
     // Update is called once per frame
@@ -129,5 +139,10 @@ public class AI : MonoBehaviour
     {
         // Run your AI code in here
         Brain.Process ();
+    }
+
+    private void OnDestroy ()
+    {
+        WorldManager.Instance.RemoveMemberFromTeam (this);
     }
 }

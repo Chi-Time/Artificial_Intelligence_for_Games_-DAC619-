@@ -1,3 +1,14 @@
+Instead of using setscore to determine if flag is not in base. Maybe instead make it so that we check if our team's flag is within a fixed distance of our base.
+
+Implement messaging so that the AI can add sub states to itself as it needs them if it's still in a comp_goal. Example: AI is taking flag home, needs health, adds health sub state to itself. Heals up, returns to previous task.
+
+If we're in a location, don't pick in the search goal.
+
+Make it so that AI can see flag when other person is carrying it.
+
+We will half evaluator of teammates and enemies so that they don't factor as heavily into the main evaluation equations. For Example: Enemies number is divided by 2 so that it's not as big a factor.
+
+
 Figure out how to add sub states through messages
 EX: Wants to call for help adds substate call for help to current composite
 

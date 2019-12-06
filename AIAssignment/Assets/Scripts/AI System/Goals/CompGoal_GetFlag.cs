@@ -4,26 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts.AI_System.States
+namespace Assets.Scripts.AI_System.Goals
 {
-    class CompState_Heal : CompositeState<AI>
+    class CompGoal_GetFlag : CompositeGoal<AI>
     {
+        private string _Flag = "";
+
+        public CompGoal_GetFlag (string flag)
+        {
+            this._Flag = flag;
+        }
+
         //TODO: Find a way to process failures in the global state as currently when thinks fail nothing happens.
         public override void Enter (AI agent)
         {
             //TODO: Find a better way to set the current state as having to place this code before the base call is just error prone.
-            Log.EnteredState ("Heal_Comp", agent);
-            AddSubState (new State_UseHealthKit ());
-            AddSubState (new State_GetHealthKit ());
+            Log.EnteredState ("Get Flag", agent);
+            AddSubGoal (new Goal_CollectFlag (_Flag));
+            AddSubGoal (new Goal_FindFlag (_Flag));
 
             base.Enter (agent);
         }
 
-        public override StateType Process (AI agent)
+        public override GoalState Process (AI agent)
         {
-            Log.ProcessingState ("Heal_Comp", agent);
-
-            UnityEngine.Debug.Log (base.Process (agent));
+            Log.ProcessingState ("Get Flag", agent);
 
             return base.Process (agent);
         }
@@ -32,7 +37,7 @@ namespace Assets.Scripts.AI_System.States
         {
             base.Exit (agent);
 
-            Log.ExitedState ("Heal_Comp", agent);
+            Log.ExitedState ("Get Flag", agent);
         }
     }
 }

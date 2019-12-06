@@ -36,6 +36,11 @@ public class SetScore : MonoBehaviour
         {
             _enemyFlagInBase = true;
             StartCoroutine (UpdateScore ());
+
+            if (this.gameObject.name.Equals (Names.BlueBase))
+                WorldManager.Instance.IsRedFlagCaptured = true;
+            else if (this.gameObject.name.Equals (Names.RedBase))
+                WorldManager.Instance.IsBlueFlagCaptured = true;
         }
     }
 

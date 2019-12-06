@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.AI_System.States
+namespace Assets.Scripts.AI_System.Goals
 {
-    class State_Wander : IState<AI>
+    class Goal_Wander : IGoal<AI>
     {
-        private StateType _CurrentStateType = StateType.Inactive;
+        public GoalState CurrentState { get; private set; }
 
         public void Enter (AI agent)
         {
@@ -17,13 +17,11 @@ namespace Assets.Scripts.AI_System.States
             agent.StartCoroutine (ChangeDirection (agent));
         }
 
-        public StateType Process (AI agent)
+        public GoalState Process (AI agent)
         {
             Log.ProcessingState ("Wander", agent);
 
-            _CurrentStateType = StateType.Active;
-
-            return _CurrentStateType;
+            return CurrentState = GoalState.Active;
         }
 
         private IEnumerator ChangeDirection (AI agent)
@@ -49,6 +47,6 @@ namespace Assets.Scripts.AI_System.States
             return false;
         }
 
-        public void AddSubState (IState<AI> subState) { throw new System.NotImplementedException (); }
+        public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }
     }
 }

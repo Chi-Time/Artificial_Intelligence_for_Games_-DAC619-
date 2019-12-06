@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts.AI_System.States
+namespace Assets.Scripts.AI_System.Goals
 {
-    class State_Globals : IState<AI>
+    class Goal_Globals : IGoal<AI>
     {
+        public GoalState CurrentState { get; private set; }
+
         private List<IEvaluator<AI>> _Evaluators = new List<IEvaluator<AI>> ();
 
         public void AddEvaluator (IEvaluator<AI> evaluator)
@@ -21,7 +23,7 @@ namespace Assets.Scripts.AI_System.States
             Log.EnteredState ("Globals", agent);
         }
 
-        public StateType Process (AI agent)
+        public GoalState Process (AI agent)
         {
             Log.ProcessingState ("Globals", agent);
 
@@ -44,19 +46,27 @@ namespace Assets.Scripts.AI_System.States
                 }
             }
 
-            // Grab the desired state from our best evaluator.
+            // Grab the desired goal from our best evaluator.
             var desiredState = bestEvaluator.GetState (agent);
 
-            // Check to see if we are already in the desired state. If we're not, then switch to the newly desired state.
-            if (agent.Brain.IsInState (desiredState) == false)
+            Debug.Log ("Best Desirability: " + bestDesirability);
+            Debug.Log ("Desired State: " + desiredState);
+
+            // Check to see if we are already in the desired goal. If we're not, then switch to the newly desired goal.
+            if (agent.Brain.IsInGoal (desiredState) == false)
             {
-                agent.Brain.ChangeState (desiredState);
-                return StateType.Active;
+                agent.Brain.ChangeGoal (desiredState);
+                return CurrentState = GoalState.Active;
             }
             // If we are, then leave as there's nothing more to do.
             else
             {
-                return StateType.Active;
+                IGoal<AI> currentGoal = agent.Brain.CurrentGoal;
+
+                if (currentGoal.CurrentState == GoalState.Failed || currentGoal.CurrentState == GoalState.Complete)
+                    agent.Brain.ChangeGoal (new Goal_Search ());
+
+                return CurrentState = GoalState.Active;
             }
         }
 
@@ -70,6 +80,6 @@ namespace Assets.Scripts.AI_System.States
             return false;
         }
 
-        public void AddSubState (IState<AI> subState) { throw new NotImplementedException (); }
+        public void AddSubGoal (IGoal<AI> subState) { throw new NotImplementedException (); }
     }
 }
