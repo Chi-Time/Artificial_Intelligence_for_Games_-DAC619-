@@ -46,10 +46,4 @@ public static class AISystem
     public const float CurrentDelay = 0.5f;
     /// <summary>The length of time (in seconds) that object persists in an agent's memory.</summary>
     public const float TargetMemoryLength = 1.5f;
-    /// <summary>The bias value to use when weighting normal bots.</summary>
-    public const float NormalCharacterBias = 1f;
-    /// <summary>The bias to use when weighting cowardly bots.</summary>
-    public const float CowardCharacterBias = 0.5f;
-    /// <summary>The bias to use when weighting aggressive bots.</summary>
-    public const float AggressorCharacterBias = 1.5f;
 }
