@@ -12,15 +12,20 @@ namespace Assets.Scripts.AI_System
         /// <summary>The currently selected target for attacking.</summary>
         public GameObject CurrentTarget { get; private set; }
 
+        /// <summary>The timer for how long it's been since we last saw our target.</summary>
         private float _Timer = 0.0f;
-        private float _MemoryLength = 2.0f;
+        /// <summary>The agent who owns this system.</summary>
         private AI _Agent = null;
 
+        /// <summary>Creates a new instance of the targeting systema and assigns the agent as owner.</summary>
+        /// <param name="agent">The agent who owns this system.</param>
         public TargetingSystem (AI agent)
         {
             this._Agent = agent;
         }
 
+        /// <summary>Determines if the target is still present in our sight or memory.</summary>
+        /// <returns>True if they are still present, false if not.</returns>
         public bool IsTargetPresent ()
         {
             // Update our memory timer.
@@ -35,7 +40,7 @@ namespace Assets.Scripts.AI_System
             else
             {
                 // If we still have short term memory of the target return true.
-                if (_Timer <= _MemoryLength)
+                if (_Timer <= AISystem.TargetMemoryLength)
                 {
                     return true;
                 }
@@ -51,6 +56,8 @@ namespace Assets.Scripts.AI_System
             return false;
         }
 
+        /// <summary>Determines if a target is still in our sight radius.</summary>
+        /// <returns>True if we can still see them, false if we cant.</returns>
         private bool IsTargetStillInSight ()
         {
             // Find all enemies in view.
@@ -70,8 +77,8 @@ namespace Assets.Scripts.AI_System
             return false;
         }
 
-        /// <summary>Selects a target based on proximity to agent and other factors.</summary>
-        /// <returns></returns>
+        /// <summary>Selects a target based on proximity to agent.</summary>
+        /// <returns>Target if one is found, null if none can be.</returns>
         public GameObject SelectTarget ()
         {
             // Find all enemies in view.
@@ -80,10 +87,11 @@ namespace Assets.Scripts.AI_System
             // Only do the calculations if there are enemies in range.
             if (enemiesInView.Count > 0)
             {
-                // Consider tracking how many times we've died by or killed an enemy and factor that into the equation.
+                // Default values for finding our best target.
                 GameObject bestTarget = null;
                 float shortestDistance = 100.0f;
 
+                // Loop through and keep picking the target with the lowest distance from us.
                 foreach (GameObject enemy in enemiesInView)
                 {
                     float distance = Vector3.Distance (_Agent.transform.position, enemy.transform.position);
@@ -95,6 +103,7 @@ namespace Assets.Scripts.AI_System
                     }
                 }
 
+                // Return this target as they're the closest.
                 CurrentTarget = bestTarget;
 
                 return bestTarget;
