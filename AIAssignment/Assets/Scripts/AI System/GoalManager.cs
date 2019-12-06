@@ -25,7 +25,7 @@ namespace Assets.Scripts.AI_System
         /// <summary>Regulator for controlling global goal ticks.</summary>
         private Regulator _GlobalRegulator = new Regulator (AISystem.GlobalDelay);
         /// <summary>Regulator for controlling current goal ticks.</summary>
-        private Regulator _CurrentStateRegulator = new Regulator (AISystem.CurrentDelay);
+        private Regulator _CurrentGoalRegulator = new Regulator (AISystem.CurrentDelay);
 
         /// <summary>Creates a new goal machine instance and assign's it an owner.</summary>
         /// <param name="agent">The agent who owns the machine.</param>
@@ -44,7 +44,7 @@ namespace Assets.Scripts.AI_System
                 GlobalGoal.Process (Agent);
             }
 
-            if (CurrentGoal != null && _CurrentStateRegulator.CanProcess ())
+            if (CurrentGoal != null && _CurrentGoalRegulator.CanProcess ())
             {
                 CurrentGoal.Process (Agent);
             }
