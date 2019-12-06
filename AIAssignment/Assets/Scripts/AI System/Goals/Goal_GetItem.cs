@@ -46,7 +46,6 @@ namespace Assets.Scripts.AI_System.Goals
 
                 if (item != null)
                 {
-                    Debug.Log ("<color=cyan>I CAN SEE THE POWERUP!</color>");
                     agent.Actions.CollectItem (item);
 
                     // Have we managed to pick it up?
