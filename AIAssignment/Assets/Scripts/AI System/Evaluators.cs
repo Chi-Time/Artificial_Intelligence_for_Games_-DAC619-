@@ -8,9 +8,11 @@ using Assets.Scripts.AI_System.Goals;
 
 namespace Assets.Scripts.AI_System
 {
+    /// <summary>Interface defining common functionality amongst evaluators.</summary>
+    /// <typeparam name="T"></typeparam>
     public interface IEvaluator<T> where T : class
     {
-        IGoal<T> GetState (T agent);
+        IGoal<T> GetGoal (T agent);
         float CalculateDesirability (T agent);
     }
 
@@ -23,7 +25,7 @@ namespace Assets.Scripts.AI_System
             return desirability;
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new Goal_Search ();
         }
@@ -43,18 +45,18 @@ namespace Assets.Scripts.AI_System
             if (target == null)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             float health = DataEvaluators.Health (agent);
             float distanceToTarget = DataEvaluators.DistanceToObject (agent.gameObject, target);
             float strength = DataEvaluators.Strength (agent);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( ( health * ( 1 - distanceToTarget ) ) * strength );
-
-            Log.Desirability ("AttackEnemy", desirability, agent);
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new Goal_AttackEnemy ();
         }
@@ -81,18 +83,17 @@ namespace Assets.Scripts.AI_System
                     return 0.0f;
             }
 
+            // Grab our variables.
             float health = DataEvaluators.Health (agent);
             float distanceToPowerup = DataEvaluators.DistanceToObject (agent.gameObject, WorldManager.Instance.PowerupSpawner);
-            float score = DataEvaluators.TeamScore (agent);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( (( ( 1 - distanceToPowerup ) ) ) );
-
-            //Debug.Log ("GET POWERUP DESIRIABILITY: " + desirability);
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             GameObject itemLocation = WorldManager.Instance.PowerupSpawner;
             return new Goal_GetItem (itemLocation, Names.PowerUp);
@@ -111,16 +112,18 @@ namespace Assets.Scripts.AI_System
             if (agent.Inventory.HasItem (Names.PowerUp) == false)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             float health = DataEvaluators.Health (agent);
             float numberofEnemiesInSight = DataEvaluators.NumberOfEnemiesInSight (agent);
             float distanceOfClosestEnemy = DataEvaluators.DistanceToObject (agent.gameObject, agent.Targeting.SelectTarget ());
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * (( 1 - distanceOfClosestEnemy ) + numberofEnemiesInSight );
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new Goal_UseItem (Names.PowerUp);
         }
@@ -146,9 +149,9 @@ namespace Assets.Scripts.AI_System
                     return 0.0f;
             }
 
-            // Get the distance from here to the health item.
+            // Grab our variables.
             float distance = DataEvaluators.DistanceToObject (agent.gameObject, healthSpawner);
-            // Get the health using a sigmoid logistic curve.
+            // Get the health using a sigmoid logistic curve to help influence it and give it characteristic.
             float health = UtilityCurves.Logistic.Evaluate (DataEvaluators.Health (agent));
 
             // If the distance is greater than 1 then return 0 as this goal isn't desirable.
@@ -161,12 +164,10 @@ namespace Assets.Scripts.AI_System
             // Calculate the desirablity of getting the health item and clamp it.
             float desirability = tweaker * (( 1 - health ) / distance);
 
-            //Log.Desirability ("Heal", desirability, agent);
-
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new CompGoal_Heal ();
         }
@@ -184,14 +185,16 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasEnemyFlag == false)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             float numberOFEnemies = DataEvaluators.NumberOfEnemiesInSight (agent);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( ( ( 1 - numberOFEnemies ) ) );
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new CompGoal_ScoreFlag (agent.Inventory.GetItem (agent.Data.EnemyFlagName));
         }
@@ -209,14 +212,16 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasFriendlyFlag == false)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             float numberOFEnemies = DataEvaluators.NumberOfEnemiesInSight (agent);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( ( ( 1 - numberOFEnemies ) ) );
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             return new CompGoal_ScoreFlag (agent.Inventory.GetItem (agent.Data.FriendlyFlagName));
         }
@@ -244,16 +249,18 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasFriendlyFlag)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             Vector3 enemyFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.EnemyFlagName);
             float health = DataEvaluators.Health (agent);
             float distanceToFlag = DataEvaluators.DistanceToPosition (agent.gameObject, enemyFlagPosition);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( health * ( 1 - distanceToFlag ) );
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             string flagName = agent.Data.EnemyFlagName;
             return new CompGoal_GetFlag (flagName);
@@ -280,17 +287,19 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasEnemyFlag)
                 return desirability = 0.0f;
 
+            // Grab our variables.
             Vector3 friendlyFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.FriendlyFlagName);
             float health = DataEvaluators.Health (agent);
             float distanceToFlag = DataEvaluators.DistanceToPosition (agent.gameObject, friendlyFlagPosition);
             float flagDistanceFromBase = DataEvaluators.DistanceToPosition (agent.Data.FriendlyBase, friendlyFlagPosition);
 
+            // Apply the equation outlined in the Report and clamp the end result.
             desirability = tweaker * ( ( health + ( 1 - distanceToFlag ) ) * flagDistanceFromBase );
 
             return Mathf.Clamp (desirability, 0.0f, 1.0f);
         }
 
-        public IGoal<AI> GetState (AI agent)
+        public IGoal<AI> GetGoal (AI agent)
         {
             string flagName = agent.Data.FriendlyFlagName;
             return new CompGoal_GetFlag (flagName);
