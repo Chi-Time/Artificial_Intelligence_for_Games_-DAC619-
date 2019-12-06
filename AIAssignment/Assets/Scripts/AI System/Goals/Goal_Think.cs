@@ -50,7 +50,7 @@ namespace Assets.Scripts.AI_System.Goals
             }
 
             // Grab the desired goal from our best evaluator.
-            var desiredState = bestEvaluator.GetState (agent);
+            var desiredState = bestEvaluator.GetGoal (agent);
             
 
             // Check to see if we are already in the desired goal. If we're not, then switch to the newly desired goal.
