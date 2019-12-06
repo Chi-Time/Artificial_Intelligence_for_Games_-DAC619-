@@ -41,11 +41,6 @@ namespace Assets.Scripts.AI_System.Goals
             CurrentState = GoalState.Inactive;
         }
 
-        public bool HandleMessage (Message message)
-        {
-            return false;
-        }
-
         public void AddSubGoal (IGoal<AI> subState) { }
     }
 }

@@ -112,12 +112,12 @@ public class AI : MonoBehaviour
 
         WorldManager.Instance.AddMemberToTeam (this);
 
-        //Data.CurrentHitPoints = UnityEngine.Random.Range (25, 100);
+        Data.CurrentHitPoints = UnityEngine.Random.Range (25, 100);
     }
 
     private IGoal<AI> GetGlobalGoal ()
     {
-        var globalGoal = new Goal_Globals ();
+        var globalGoal = new Goal_Think ();
 
         globalGoal.AddEvaluator (new Evaluator_GetEnemyFlag ());
         globalGoal.AddEvaluator (new Evaluator_ScoreEnemyFlag ());

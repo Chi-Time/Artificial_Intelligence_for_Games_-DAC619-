@@ -7,12 +7,15 @@ using UnityEngine;
 
 namespace Assets.Scripts.AI_System.Goals
 {
-    class Goal_Globals : IGoal<AI>
+    class Goal_Think : IGoal<AI>
     {
         public GoalState CurrentState { get; private set; }
 
+        /// <summary>Reference to all of the evaluators we should check.</summary>
         private List<IEvaluator<AI>> _Evaluators = new List<IEvaluator<AI>> ();
 
+        /// <summary>Add an evaluator to the list to be checked each tick.</summary>
+        /// <param name="evaluator">The evaluator to add.</param>
         public void AddEvaluator (IEvaluator<AI> evaluator)
         {
             _Evaluators.Add (evaluator);
@@ -48,9 +51,7 @@ namespace Assets.Scripts.AI_System.Goals
 
             // Grab the desired goal from our best evaluator.
             var desiredState = bestEvaluator.GetState (agent);
-
-            Debug.Log ("Best Desirability: " + bestDesirability);
-            Debug.Log ("Desired State: " + desiredState);
+            
 
             // Check to see if we are already in the desired goal. If we're not, then switch to the newly desired goal.
             if (agent.Brain.IsInGoal (desiredState) == false)
@@ -58,14 +59,16 @@ namespace Assets.Scripts.AI_System.Goals
                 agent.Brain.ChangeGoal (desiredState);
                 return CurrentState = GoalState.Active;
             }
-            // If we are, then leave as there's nothing more to do.
+            // If we are, then check to see if it's finished yet.
             else
             {
+                // If it has finished go back to a default goal.
                 IGoal<AI> currentGoal = agent.Brain.CurrentGoal;
 
                 if (currentGoal.CurrentState == GoalState.Failed || currentGoal.CurrentState == GoalState.Complete)
                     agent.Brain.ChangeGoal (new Goal_Search ());
 
+                // IF it has hasn't then wait till next time.
                 return CurrentState = GoalState.Active;
             }
         }
@@ -73,11 +76,6 @@ namespace Assets.Scripts.AI_System.Goals
         public void Exit (AI agent)
         {
             Log.ExitedState ("Globals", agent);
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return false;
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new NotImplementedException (); }

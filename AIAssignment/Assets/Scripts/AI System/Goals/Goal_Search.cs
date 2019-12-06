@@ -18,9 +18,9 @@ namespace Assets.Scripts.AI_System.Goals
             Log.EnteredState ("Search", agent);
 
             // If there is no location target then get one.
-            if (_Location == null)
+            if (_Location == Vector3.zero)
             {
-                _Location = WorldManager.Instance.GetImportantLocation ().transform.position;
+                _Location = GetLocation (agent);
             }
         }
 
@@ -64,12 +64,16 @@ namespace Assets.Scripts.AI_System.Goals
 
         private bool IsAtLocation (AI agent)
         {
-            const float minDistance = 2f;
             // Check if we're close to our destination to consider us as having reached it.
-            if (Vector3.Distance (agent.transform.position, _Location) <= minDistance)
-            {
+            const float minDistance = 2f;
+
+            if (agent.Actions.HasArrived (minDistance))
                 return true;
-            }
+
+            //if (Helpers.IsNearPosition (agent.transform.position, _Location, minDistance))
+            //{
+            //    return true;
+            //}
 
             return false;
         }
@@ -77,12 +81,6 @@ namespace Assets.Scripts.AI_System.Goals
         public void Exit (AI agent)
         {
             Log.ExitedState ("Search", agent);
-            _Location = Vector3.zero;
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return true;
         }
 
         public void AddSubGoal (IGoal<AI> subState) { }

@@ -11,8 +11,11 @@ namespace Assets.Scripts.AI_System.Goals
     {
         public GoalState CurrentState { get; private set; }
 
+        /// <summary>Reference to the name of the flag to find.</summary>
         private string _Flag = "";
+        /// <summary>The minimum distance to determine if we're close enough to see the item.</summary>
         private const float _MinDistance = 5f;
+        /// <summary>The last known position the flag was seen at.</summary>
         private Vector3 _FlagPosition = Vector3.zero;
 
         public Goal_FindFlag (string flag)
@@ -24,14 +27,8 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.EnteredState ("FindFlag", agent);
 
-            //TODO: Make it so that the flag can be "spotted" by teammates in short term memory
-            //TODO: So that they can search there for it too.
-            // Get the last known location of the enemy team's flag.
-            if (agent.CompareTag (Tags.RedTeam))
-                _FlagPosition = WorldManager.Instance.BlueBase.transform.position;
-            else if (agent.CompareTag (Tags.BlueTeam))
-                _FlagPosition = WorldManager.Instance.RedBase.transform.position;
-
+            // Grab the last known position of the flag and attempt to move there.
+            _FlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (_Flag);
             agent.Actions.MoveTo (_FlagPosition);
         }
 
@@ -48,14 +45,18 @@ namespace Assets.Scripts.AI_System.Goals
                 return CurrentState = GoalState.Failed;
 
             // If we're near the location we think the flag is at then we've completed our job.
-            if (Vector3.Distance (agent.transform.position, _FlagPosition) <= _MinDistance)
+            if (agent.Actions.HasArrived (_MinDistance))
                 return CurrentState = GoalState.Complete;
 
             return CurrentState = GoalState.Active;
         }
 
+        /// <summary>Retrieve the flag in our sights if one exists.</summary>
+        /// <param name="agent">The agent to use as our eyes.</param>
+        /// <returns>The flag we can see if one exists, null if not.</returns>
         private GameObject GetFlagInView (AI agent)
         {
+            // Grab an item in our view from our senses.
             GameObject viewedItem = agent.Senses.GetObjectInViewByName (_Flag);
 
             return viewedItem;
@@ -66,11 +67,6 @@ namespace Assets.Scripts.AI_System.Goals
             Log.ExitedState ("FindFlag", agent);
 
             _FlagPosition = Vector3.zero;
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return true;
         }
 
         public void AddSubGoal (IGoal<AI> subState)

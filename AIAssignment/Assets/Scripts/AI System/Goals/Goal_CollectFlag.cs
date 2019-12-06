@@ -11,8 +11,9 @@ namespace Assets.Scripts.AI_System.Goals
     {
         public GoalState CurrentState { get; private set; }
 
+        /// <summary>Reference to the name of the flag to grab.</summary>
         private string _Flag = "";
-
+        
         public Goal_CollectFlag (string flag)
         {
             this._Flag = flag;
@@ -39,7 +40,6 @@ namespace Assets.Scripts.AI_System.Goals
                 // If we've managed to pick up the flag then return that our task is completed.
                 if (agent.Inventory.HasItem (flag.name))
                 {
-                    Debug.Log ("We Got It");
                     return CurrentState = GoalState.Complete;
                 }
             }
@@ -52,8 +52,12 @@ namespace Assets.Scripts.AI_System.Goals
             return CurrentState = GoalState.Active;
         }
 
+        /// <summary>Retrieve the flag in our sights if one exists.</summary>
+        /// <param name="agent">The agent to use as our eyes.</param>
+        /// <returns>The flag we can see if one exists, null if not.</returns>
         private GameObject GetFlagInView (AI agent)
         {
+            // Grab an item in our view from our senses.
             GameObject viewedItem = agent.Senses.GetObjectInViewByName (_Flag);
 
             return viewedItem;
@@ -62,11 +66,6 @@ namespace Assets.Scripts.AI_System.Goals
         public void Exit (AI agent)
         {
             Log.ExitedState ("CollectFlag", agent);
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return false;
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }

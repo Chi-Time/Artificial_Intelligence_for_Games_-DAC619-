@@ -11,8 +11,11 @@ namespace Assets.Scripts.AI_System.Goals
     {
         public GoalState CurrentState { get; private set; }
 
+        /// <summary>Reference to the object to drop.</summary>
         private GameObject _Object = null;
 
+        /// <summary>Creates a new goal with an object drop.</summary>
+        /// <param name="obj">The object to drop in this goal.</param>
         public Goal_DropObject (GameObject obj)
         {
             this._Object = obj;
@@ -22,6 +25,7 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.EnteredState ("DropObject", agent);
 
+            // Attempt to drop the item.
             agent.Actions.DropItem (_Object);
         }
 
@@ -29,10 +33,12 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.ProcessingState ("DropObject", agent);
 
+            // Do we still have the item? If so, try and drop it.
             if (agent.Inventory.HasItem (_Object.name))
             {
                 agent.Actions.DropItem (_Object);
             }
+            // If not, return that we finished our job.
             else
             {
                 return CurrentState = GoalState.Complete;
@@ -45,12 +51,8 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.ExitedState ("DropObject", agent);
 
+            // Clean up after ourselves.
             _Object = null;
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return false;
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }

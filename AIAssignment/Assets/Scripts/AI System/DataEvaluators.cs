@@ -105,7 +105,6 @@ namespace Assets.Scripts.AI_System
 
         public static float NumberOfFriendliesAtPosition (AI agent, Vector3 position)
         {
-            const float half = 0.5f;
             float desirability = 0.0f;
             const float minDistance = 7.5f;
 

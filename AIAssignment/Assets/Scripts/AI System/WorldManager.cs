@@ -50,6 +50,8 @@ namespace Assets.Scripts.AI_System
             HealthKitSpawner = GameObject.Find (Names.HealthKitSpawner);
             RedTeamMembers = new HashSet<AI> ();
             BlueTeamMembers = new HashSet<AI> ();
+            RedFlagLastPosition = RedFlag.transform.position;
+            BlueFlagLastPosition = BlueFlag.transform.position;
 
             ImportantLocations = new List<GameObject> ();
             ImportantLocations.Add (RedBase);
@@ -149,9 +151,6 @@ namespace Assets.Scripts.AI_System
             return null;
         }
 
-        // TODO: Fix agents from just stopping and getting stuck in a location
-        // Not sure what's causing it but it's annoying.
-        // TODO: Make it so that grabbing enemy flag isn't always the first best plan.
         public bool TeamHasFriendlyFlag (AI agent)
         {
             var teamMembers = GetTeammates (agent);

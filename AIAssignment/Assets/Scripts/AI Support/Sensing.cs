@@ -18,8 +18,6 @@ public class Sensing : MonoBehaviour
     private AgentData _agentData;
 
     private const int MaxObjectsInView = 10;
-    // The maximum number of objects which the short term memory can recall.
-    private const int MaxObjectsInMemory = 5;
 
     // Masks to limit visibility
     public LayerMask VisibleToAiMask;

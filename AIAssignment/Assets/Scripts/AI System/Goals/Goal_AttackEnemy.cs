@@ -20,15 +20,18 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.ProcessingState ("AttackEnemy", agent);
 
+            // If we don't have a target in sight, then get a new one.
             if (agent.Targeting.IsTargetPresent () == false)
             {
                 agent.Targeting.SelectTarget ();
             }
 
+            // If the target is in range to be attacked, then let's start hitting.
             if (agent.Senses.IsInAttackRange (agent.Targeting.CurrentTarget))
             {
                 agent.Actions.AttackEnemy (agent.Targeting.CurrentTarget);
             }
+            // If not, let's get closer to em.
             else
             {
                 agent.Actions.MoveTo (agent.Targeting.CurrentTarget);
@@ -41,11 +44,6 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.ExitedState ("AttackEnemy", agent);
             CurrentState = GoalState.Inactive;
-        }
-
-        public bool HandleMessage (Message message)
-        {
-            return false;
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }

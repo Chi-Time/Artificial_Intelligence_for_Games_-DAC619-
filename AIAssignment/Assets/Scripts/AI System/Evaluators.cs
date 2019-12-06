@@ -29,68 +29,6 @@ namespace Assets.Scripts.AI_System
         }
     }
 
-    public class Evaluator_GuardFriendlyFlag : IEvaluator<AI>
-    {
-        public float CalculateDesirability (AI agent)
-        {
-            float desirability = 0.0f;
-            // Tweaker decided based on pre-tweaked value adjusting.
-            const float tweaker = 0.45f;
-            Vector3 lastKnownFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.FriendlyFlagName);
-
-            // If the flag is not within our base, then there's no point guarding it.
-            if (WorldManager.Instance.IsTeamFlagHome (agent) == false)
-                return desirability = 0.0f;
-
-            // If we're currently holding a flag, then it's not a good idea to guard.
-            if (agent.Data.HasEnemyFlag)
-                return desirability = 0.0f;
-
-            float score = DataEvaluators.TeamScore (agent);
-            float numberOfFriendlies = DataEvaluators.NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
-
-            desirability = tweaker * ( ( 1 - score ) * (1 - numberOfFriendlies) );
-
-            return Mathf.Clamp (desirability, 0.0f, 1.0f);
-        }
-
-        public IGoal<AI> GetState (AI agent)
-        {
-            return new Goal_GuardArea (WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.FriendlyFlagName));
-        }
-    }
-
-    public class Evaluator_GuardEnemyFlag : IEvaluator<AI>
-    {
-        public float CalculateDesirability (AI agent)
-        {
-            float desirability = 0.0f;
-            // Tweaker decided based on pre-tweaked value adjusting.
-            const float tweaker = 0.45f;
-            Vector3 lastKnownFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.EnemyFlagName);
-
-            // If the flag is not within our base, then there's no point guarding it.
-            if (WorldManager.Instance.IsEnemyFlagCaptured (agent) == false)
-                return desirability = 0.0f;
-
-            // If we're currently holding a flag, then it's not a good idea to guard.
-            if (agent.Data.HasFriendlyFlag)
-                return desirability = 0.0f;
-
-            float score = DataEvaluators.TeamScore (agent);
-            float numberOfFriendlies = DataEvaluators.NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
-
-            desirability = tweaker * ( ( 1 - score ) * ( 1 - numberOfFriendlies ) );
-
-            return Mathf.Clamp (desirability, 0.0f, 1.0f);
-        }
-
-        public IGoal<AI> GetState (AI agent)
-        {
-            return new Goal_GuardArea (WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.EnemyFlagName));
-        }
-    }
-
     public class Evaluator_AttackEnemy : IEvaluator<AI>
     {
         public float CalculateDesirability (AI agent)
@@ -230,7 +168,7 @@ namespace Assets.Scripts.AI_System
 
         public IGoal<AI> GetState (AI agent)
         {
-            return new CompState_Heal ();
+            return new CompGoal_Heal ();
         }
     }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.AI_System
 {
+    /// <summary>Regulates a task by only allowing it to fire at set intervals.</summary>
     class Regulator
     {
         /// <summary>The current time that has elapsed for this regulator.</summary>
@@ -24,6 +25,7 @@ namespace Assets.Scripts.AI_System
         /// <returns>True if the task is allowed to process.</returns>
         public bool CanProcess ()
         {
+            // Increase timer every frame, if it's above the threshold allow a tick and reset it.
             _Timer += UnityEngine.Time.deltaTime;
 
             if (_Timer >= _ProcessDelay)

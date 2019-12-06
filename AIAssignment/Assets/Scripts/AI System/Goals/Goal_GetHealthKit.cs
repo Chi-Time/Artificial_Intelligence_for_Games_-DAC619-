@@ -89,11 +89,6 @@ namespace Assets.Scripts.AI_System.Goals
             _HealthKit = null;
         }
 
-        public bool HandleMessage (Message message)
-        {
-            return false;
-        }
-
         public void AddSubGoal (IGoal<AI> subState) { throw new NotImplementedException (); }
     }
 }

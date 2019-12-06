@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.AI_System.Goals
 {
-    class CompState_Heal : CompositeGoal<AI>
+    /// <summary>Responsible for making an agent find and then use a health kit item.</summary>
+    class CompGoal_Heal : CompositeGoal<AI>
     {
-        //TODO: Find a way to process failures in the global state as currently when thinks fail nothing happens.
         public override void Enter (AI agent)
         {
-            //TODO: Find a better way to set the current state as having to place this code before the base call is just error prone.
+            // Setup our composite goal in reverse order so that our stack works correctly.
             Log.EnteredState ("Heal_Comp", agent);
+            //AddSubGoal (new Goal_UseItem (Names.HealthKit));
+            //AddSubGoal (new Goal_GetItem (WorldManager.Instance.HealthKitSpawner, Names.HealthKit));
             AddSubGoal (new Goal_UseHealthKit ());
             AddSubGoal (new Goal_GetHealthKit ());
 
@@ -23,8 +26,7 @@ namespace Assets.Scripts.AI_System.Goals
         {
             Log.ProcessingState ("Heal_Comp", agent);
 
-            UnityEngine.Debug.Log (base.Process (agent));
-
+            // Run the base sub goals processor to execute the logic in the sub goals.
             return base.Process (agent);
         }
 

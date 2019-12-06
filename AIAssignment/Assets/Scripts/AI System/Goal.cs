@@ -7,12 +7,12 @@ using Assets.Scripts.AI_System.Goals;
 
 namespace Assets.Scripts.AI_System
 {
-    /// <summary>The type which the goal is currently in.</summary>
+    /// <summary>The state which the goal is currently in.</summary>
     public enum GoalState { Inactive, Active, Failed, Complete }
 
     /// <summary>Interface for all base goal behaviours.</summary>
-    /// <typeparam name="T">The class who owns this goal.</typeparam>
-    public interface IGoal<T> : IListener where T : class
+    /// <typeparam name="T">The agent type to own this goal.</typeparam>
+    public interface IGoal<T> where T : class
     {
         GoalState CurrentState { get; }
 
@@ -22,6 +22,8 @@ namespace Assets.Scripts.AI_System
         void AddSubGoal (IGoal<T> subState);
     }
 
+    /// <summary>Base for all composite goals</summary>
+    /// <typeparam name="T">The agent type to own this goal.</typeparam>
     public abstract class CompositeGoal<T> : IGoal<T> where T : class
     {
         public GoalState CurrentState { get; private set; }
@@ -29,15 +31,18 @@ namespace Assets.Scripts.AI_System
         /// <summary>The various sub goals this composite goal has left to process.</summary>
         public Stack<IGoal<T>> SubGoals { get; private set; }
 
+        /// <summary>The current sub goal we have selected from our stack.</summary>
         protected IGoal<T> _CurrentSubGoal = null;
 
         public CompositeGoal ()
         {
+            // Initialise our sub gaols with a default value.
             SubGoals = new Stack<IGoal<T>> ();
         }
 
         public virtual void Enter (T agent)
         {
+            // Get the first item from our sub goals and enter into it.
             _CurrentSubGoal = SubGoals.Pop ();
             _CurrentSubGoal.Enter (agent);
         }
@@ -92,18 +97,16 @@ namespace Assets.Scripts.AI_System
 
         public virtual void Exit (T agent)
         {
+            // Clean up after ourselves.
             _CurrentSubGoal = null;
             SubGoals.Clear ();
         }
 
+        /// <summary>Add's a sub goal to this compoosite goal</summary>
+        /// <param name="subGoal">The new sub goal to add as a child.</param>
         public virtual void AddSubGoal (IGoal<T> subGoal)
         {
             SubGoals.Push (subGoal);
-        }
-
-        public virtual bool HandleMessage (Message message)
-        {
-            return false;
         }
     }
 }

@@ -8,18 +8,17 @@ using Assets.Scripts.AI_System.Goals;
 
 namespace Assets.Scripts.AI_System
 {
-    //TODO: Consider a list of global goals to keep track of.
-    //TODO: Consider how you could define goal transitions through the use of utility values.
-    //TODO: Consider how to make atomic and composite goals and treat goals as just goals.
-    public class GoalManager<T> : IListener where T : class
+    /// <summary>Processes and manages goals</summary>
+    /// <typeparam name="T">Data type to own this manager.</typeparam>
+    public class GoalManager<T> where T : class
     {
-        /// <summary>Reference to the owner of the machine.</summary>
+        /// <summary>Reference to the owner of the manager.</summary>
         public T Agent { get; private set; }
-        /// <summary>Reference to the current global goal in the machine.</summary>
+        /// <summary>Reference to the current global goal in the manager.</summary>
         public IGoal<T> GlobalGoal { get; private set; }
-        /// <summary>Reference to the currently active goal in the machine.</summary>
+        /// <summary>Reference to the currently active goal in the manager.</summary>
         public IGoal<T> CurrentGoal { get; private set; }
-        /// <summary>Reference to the previous goal of the machine.</summary>
+        /// <summary>Reference to the previous goal of the manager.</summary>
         public IGoal<T> PreviousGoal { get; private set; }
 
         /// <summary>Regulator for controlling global goal ticks.</summary>
@@ -27,14 +26,14 @@ namespace Assets.Scripts.AI_System
         /// <summary>Regulator for controlling current goal ticks.</summary>
         private Regulator _CurrentGoalRegulator = new Regulator (AISystem.CurrentDelay);
 
-        /// <summary>Creates a new goal machine instance and assign's it an owner.</summary>
-        /// <param name="agent">The agent who owns the machine.</param>
+        /// <summary>Creates a new goal manager instance and assign's it an owner.</summary>
+        /// <param name="agent">The agent who owns the manager.</param>
         public GoalManager (T agent)
         {
             this.Agent = agent;
         }
 
-        /// <summary>Updates the machine's goals.</summary>
+        /// <summary>Updates the manager's goals.</summary>
         public void Process ()
         {
             // If there is a goal available and the regulator says we can process it.
@@ -50,8 +49,8 @@ namespace Assets.Scripts.AI_System
             }
         }
 
-        /// <summary>Change the currently active goal of the machine.</summary>
-        /// <param name="newGoal">The new goal for the machine to switch to.</param>
+        /// <summary>Change the currently active goal of the manager.</summary>
+        /// <param name="newGoal">The new goal for the manager to switch to.</param>
         public void ChangeGoal (IGoal<T> newGoal)
         {
             // Reset our previous goal to this one.
@@ -64,13 +63,13 @@ namespace Assets.Scripts.AI_System
             CurrentGoal.Enter (Agent);
         }
 
-        /// <summary>Revert's the machine back to a previous goal in memory.</summary>
+        /// <summary>Revert's the manager back to a previous goal in memory.</summary>
         public void RevertToPreviousGoal ()
         {
             ChangeGoal (PreviousGoal);
         }
 
-        /// <summary>Returns true if the machine is in the given goal.</summary>
+        /// <summary>Returns true if the manager is in the given goal.</summary>
         /// <param name="goal">The goal to test for.</param>
         public bool IsInGoal (IGoal<T> goal)
         {
@@ -92,22 +91,5 @@ namespace Assets.Scripts.AI_System
         /// <summary>Set's the agent's previous goal to that of the one provided.</summary>
         /// <param name="newGoal">The new goal to mark as the previous.</param>
         public void SetPreviousGoal (IGoal<T> newGoal) => PreviousGoal = newGoal;
-
-        public bool HandleMessage (Message message)
-        {
-            // If there is a goal available and it can process the message.
-            if (CurrentGoal != null && CurrentGoal.HandleMessage (message))
-            {
-                // Return that the message was handled.
-                return true;
-            }
-
-            if (GlobalGoal != null && GlobalGoal.HandleMessage (message))
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }
