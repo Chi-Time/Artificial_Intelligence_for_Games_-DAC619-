@@ -74,35 +74,4 @@ namespace Assets.Scripts.AI_System
             Debug.Log ($"<Color={ColorTypes.White}>State_{stateName}:</color> <color={color.ToString ()}> {stateValue} </color>| {agent}");
         }
     }
-
-    /// <summary>Custom queue for handling frequent remove operations but keeping a FIFO system.</summary>
-    /// <typeparam name="T">The type of data to hold.</typeparam>
-    public class CustomQueue<T>
-    {
-        public int Count { get { return list.Count; } }
-
-        private LinkedList<T> list = new LinkedList<T> ();
-
-        public void Enqueue (T t)
-        {
-            list.AddLast (t);
-        }
-
-        public T Dequeue ()
-        {
-            var result = list.First.Value;
-            list.RemoveFirst ();
-            return result;
-        }
-
-        public T Peek ()
-        {
-            return list.First.Value;
-        }
-
-        public bool Remove (T t)
-        {
-            return list.Remove (t);
-        }
-    }
 }
