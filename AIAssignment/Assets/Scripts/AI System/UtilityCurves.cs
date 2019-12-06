@@ -9,8 +9,6 @@ namespace Assets.Scripts.AI_System
 {
     class UtilityCurves : MonoBehaviour
     {
-        public static UtilityCurves Instance { get; private set; }
-
         public static AnimationCurve Step { get; private set; }
         public static AnimationCurve Linear { get; private set; }
         public static AnimationCurve EaseOut { get; private set; }
@@ -28,11 +26,6 @@ namespace Assets.Scripts.AI_System
 
         private void Awake ()
         {
-            if (Instance == null)
-                Instance = this;
-            else
-                Destroy (this);
-
             SetStaticFields ();
         }
 
@@ -53,11 +46,6 @@ namespace Assets.Scripts.AI_System
             _Logistic = null;
             _Exponential = null;
             _ReverseExponential = null;
-        }
-
-        [ContextMenu ("Test Linear")]
-        public void TestLinear ()
-        {
         }
     }
 }
