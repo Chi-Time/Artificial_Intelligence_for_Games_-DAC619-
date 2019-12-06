@@ -15,7 +15,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("Search", agent);
+            Log.EnteredGoal ("Search", agent);
 
             // If there is no location target then get one.
             if (_Location == Vector3.zero)
@@ -26,7 +26,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("Search", agent);
+            Log.ProcessingGoal ("Search", agent);
 
             // If we've reached our location or lost it, get a new one and go there.
             if (IsAtLocation (agent) || _Location == Vector3.zero)
@@ -80,7 +80,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("Search", agent);
+            Log.ExitedGoal ("Search", agent);
         }
 
         public void AddSubGoal (IGoal<AI> subState) { }

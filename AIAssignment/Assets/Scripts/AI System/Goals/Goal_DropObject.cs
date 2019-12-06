@@ -23,7 +23,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("DropObject", agent);
+            Log.EnteredGoal ("DropObject", agent);
 
             // Attempt to drop the item.
             agent.Actions.DropItem (_Object);
@@ -31,7 +31,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("DropObject", agent);
+            Log.ProcessingGoal ("DropObject", agent);
 
             // Do we still have the item? If so, try and drop it.
             if (agent.Inventory.HasItem (_Object.name))
@@ -49,7 +49,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("DropObject", agent);
+            Log.ExitedGoal ("DropObject", agent);
 
             // Clean up after ourselves.
             _Object = null;

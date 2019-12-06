@@ -16,7 +16,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("MoveToBase", agent);
+            Log.EnteredGoal ("MoveToBase", agent);
 
             // Move to our home base.
             agent.Actions.MoveTo (agent.Data.FriendlyBase);
@@ -24,7 +24,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("MoveToBase", agent);
+            Log.ProcessingGoal ("MoveToBase", agent);
 
             // If we're in reach our home base then return that we did our job.
             if (Helpers.IsNearPosition (agent.transform.position, agent.Data.FriendlyBase.transform.position, _MinDistance))
@@ -35,7 +35,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("MoveToBase", agent);
+            Log.ExitedGoal ("MoveToBase", agent);
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }

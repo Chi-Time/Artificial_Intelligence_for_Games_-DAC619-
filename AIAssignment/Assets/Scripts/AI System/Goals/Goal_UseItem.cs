@@ -23,12 +23,25 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("UseItem", agent);
+            Log.EnteredGoal ("UseItem", agent);
+
+            // Do we have the item? If so, try and get it and use it.
+            if (agent.Inventory.HasItem (_ItemName))
+            {
+                GameObject item = agent.Inventory.GetItem (_ItemName);
+                agent.Actions.UseItem (item);
+
+                CurrentState = GoalState.Complete;
+            }
         }
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("UseItem", agent);
+            Log.ProcessingGoal ("UseItem", agent);
+
+            // If we managed to use the item easrlier, then let's quit out.
+            if (CurrentState == GoalState.Complete)
+                return CurrentState;
 
             // Do we have the item? If so, try and get it and use it.
             if (agent.Inventory.HasItem (_ItemName))
@@ -48,7 +61,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("UseItem", agent);
+            Log.ExitedGoal ("UseItem", agent);
         }
 
         public void AddSubGoal (IGoal<AI> state) { }

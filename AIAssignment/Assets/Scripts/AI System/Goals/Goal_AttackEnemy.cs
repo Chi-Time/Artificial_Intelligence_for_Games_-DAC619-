@@ -12,13 +12,13 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("AttackEnemy", agent);
+            Log.EnteredGoal ("AttackEnemy", agent);
             CurrentState = GoalState.Inactive;
         }
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("AttackEnemy", agent);
+            Log.ProcessingGoal ("AttackEnemy", agent);
 
             // If we don't have a target in sight, then get a new one.
             if (agent.Targeting.IsTargetPresent () == false)
@@ -42,7 +42,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("AttackEnemy", agent);
+            Log.ExitedGoal ("AttackEnemy", agent);
             CurrentState = GoalState.Inactive;
         }
 

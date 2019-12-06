@@ -23,12 +23,12 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("Globals", agent);
+            Log.EnteredGoal ("Globals", agent);
         }
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("Globals", agent);
+            Log.ProcessingGoal ("Globals", agent);
 
             // Default values for both desirability and evaluator.
             float bestDesirability = 0.0f;
@@ -75,7 +75,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("Globals", agent);
+            Log.ExitedGoal ("Globals", agent);
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new NotImplementedException (); }

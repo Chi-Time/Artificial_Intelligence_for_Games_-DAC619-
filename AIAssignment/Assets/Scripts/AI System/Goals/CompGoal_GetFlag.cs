@@ -21,7 +21,7 @@ namespace Assets.Scripts.AI_System.Goals
         public override void Enter (AI agent)
         {
             // Setup our composite goal in reverse order so that our stack works correctly.
-            Log.EnteredState ("Get Flag", agent);
+            Log.EnteredGoal ("Get Flag", agent);
             AddSubGoal (new Goal_CollectFlag (_Flag));
             AddSubGoal (new Goal_FindFlag (_Flag));
 
@@ -30,7 +30,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public override GoalState Process (AI agent)
         {
-            Log.ProcessingState ("Get Flag", agent);
+            Log.ProcessingGoal ("Get Flag", agent);
 
             // Run the base sub goals processor to execute the logic in the sub goals.
             return base.Process (agent);
@@ -40,7 +40,7 @@ namespace Assets.Scripts.AI_System.Goals
         {
             base.Exit (agent);
 
-            Log.ExitedState ("Get Flag", agent);
+            Log.ExitedGoal ("Get Flag", agent);
         }
     }
 }

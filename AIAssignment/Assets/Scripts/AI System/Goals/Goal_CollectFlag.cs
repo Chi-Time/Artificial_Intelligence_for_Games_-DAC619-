@@ -21,12 +21,12 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("CollectFlag", agent);
+            Log.EnteredGoal ("CollectFlag", agent);
         }
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("CollectFlag", agent);
+            Log.ProcessingGoal ("CollectFlag", agent);
 
             // Can we see the flag in our sight?
             GameObject flag = GetFlagInView (agent);
@@ -65,7 +65,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("CollectFlag", agent);
+            Log.ExitedGoal ("CollectFlag", agent);
         }
 
         public void AddSubGoal (IGoal<AI> subState) { throw new System.NotImplementedException (); }

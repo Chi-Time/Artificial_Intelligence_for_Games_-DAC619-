@@ -13,18 +13,16 @@ namespace Assets.Scripts.AI_System.Goals
         public override void Enter (AI agent)
         {
             // Setup our composite goal in reverse order so that our stack works correctly.
-            Log.EnteredState ("Heal_Comp", agent);
-            //AddSubGoal (new Goal_UseItem (Names.HealthKit));
-            //AddSubGoal (new Goal_GetItem (WorldManager.Instance.HealthKitSpawner, Names.HealthKit));
-            AddSubGoal (new Goal_UseHealthKit ());
-            AddSubGoal (new Goal_GetHealthKit ());
+            Log.EnteredGoal ("Heal_Comp", agent);
+            AddSubGoal (new Goal_UseItem (Names.HealthKit));
+            AddSubGoal (new Goal_GetItem (WorldManager.Instance.HealthKitSpawner, Names.HealthKit));
 
             base.Enter (agent);
         }
 
         public override GoalState Process (AI agent)
         {
-            Log.ProcessingState ("Heal_Comp", agent);
+            Log.ProcessingGoal ("Heal_Comp", agent);
 
             // Run the base sub goals processor to execute the logic in the sub goals.
             return base.Process (agent);
@@ -34,7 +32,7 @@ namespace Assets.Scripts.AI_System.Goals
         {
             base.Exit (agent);
 
-            Log.ExitedState ("Heal_Comp", agent);
+            Log.ExitedGoal ("Heal_Comp", agent);
         }
     }
 }

@@ -29,14 +29,14 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("GetItem: " + _ItemLocation.name, agent);
+            Log.EnteredGoal ("GetItem: " + _ItemLocation.name, agent);
 
             CurrentState = GoalState.Inactive;
         }
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("GetItem: " + _ItemLocation.name, agent);
+            Log.ProcessingGoal ("GetItem: " + _ItemLocation.name, agent);
             
             // If the location of the item is null then we've failed to get it as there's nowhere to go.
             if (_ItemLocation == null)
@@ -98,7 +98,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("GetItem: " + _ItemLocation.name, agent);
+            Log.ExitedGoal ("GetItem: " + _ItemLocation.name, agent);
             _ItemLocation = null;
             _ItemName = "";
         }

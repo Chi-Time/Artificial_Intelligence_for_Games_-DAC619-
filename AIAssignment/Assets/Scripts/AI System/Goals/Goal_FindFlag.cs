@@ -25,7 +25,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Enter (AI agent)
         {
-            Log.EnteredState ("FindFlag", agent);
+            Log.EnteredGoal ("FindFlag", agent);
 
             // Grab the last known position of the flag and attempt to move there.
             _FlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (_Flag);
@@ -34,7 +34,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public GoalState Process (AI agent)
         {
-            Log.ProcessingState ("FindFlag", agent);
+            Log.ProcessingGoal ("FindFlag", agent);
 
             // If we've seen the flag on our travels, then we've completed our job.
             if (GetFlagInView (agent))
@@ -64,7 +64,7 @@ namespace Assets.Scripts.AI_System.Goals
 
         public void Exit (AI agent)
         {
-            Log.ExitedState ("FindFlag", agent);
+            Log.ExitedGoal ("FindFlag", agent);
 
             _FlagPosition = Vector3.zero;
         }
