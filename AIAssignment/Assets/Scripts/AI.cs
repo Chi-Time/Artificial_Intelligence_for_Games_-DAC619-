@@ -79,16 +79,17 @@ using Assets.Scripts.AI_System.Goals;
 /// </summary>
 public class AI : MonoBehaviour
 {
-    // Gives access to important data about the AI agent (see above)
+    /// <summary>Gives access to important data about the AI agent (see above)</summary>
     public AgentData Data { get; private set; }
-    // Gives access to the agent senses
+    /// <summary>Gives access to the agent senses</summary>
     public Sensing Senses { get; private set; }
-    // gives access to the agents inventory
+    /// <summary>gives access to the agents inventory</summary>
     public InventoryController Inventory { get; private set; }
-    // This is the script containing the AI agents actions
-    // e.g. agentScript.MoveTo(enemy);
+    /// <summary>the script containing the AI agents actions</summary>
     public AgentActions Actions { get; private set; }
+    /// <summary>Reference to the brain of the agent controlling it's decisions and actions.</summary>
     public GoalManager<AI> Brain { get; private set; }
+    /// <summary>Reference to the targetin component of the agent allowing it to select enemies.</summary>
     public TargetingSystem Targeting { get; private set; }
 
     private void Awake ()
@@ -107,16 +108,17 @@ public class AI : MonoBehaviour
     // Use this for initialization
     private void Start ()
     {
+        // Setup the goal manager with it's base goals.
         Brain.SetGlobalGoal (GetGlobalGoal ());
         Brain.SetCurrentGoal (new Goal_Search ());
 
+        // Add member to world managers teams.
         WorldManager.Instance.AddMemberToTeam (this);
-
-        Data.CurrentHitPoints = UnityEngine.Random.Range (25, 100);
     }
 
     private IGoal<AI> GetGlobalGoal ()
     {
+        // Initialise the global think state and add all of the agent's evaluators.
         var globalGoal = new Goal_Think ();
 
         globalGoal.AddEvaluator (new Evaluator_GetEnemyFlag ());
@@ -128,8 +130,6 @@ public class AI : MonoBehaviour
         globalGoal.AddEvaluator (new Evaluator_GetPowerup ());
         globalGoal.AddEvaluator (new Evaluator_UsePowerup ());
         globalGoal.AddEvaluator (new Evaluator_Heal ());
-        //globalGoal.AddEvaluator (new Evaluator_GuardEnemyFlag ());
-        //globalGoal.AddEvaluator (new Evaluator_GuardFriendlyFlag ());
 
         return globalGoal;
     }
@@ -143,6 +143,7 @@ public class AI : MonoBehaviour
 
     private void OnDestroy ()
     {
+        // We've dided, remove member from world managers teams.
         WorldManager.Instance.RemoveMemberFromTeam (this);
     }
 }
