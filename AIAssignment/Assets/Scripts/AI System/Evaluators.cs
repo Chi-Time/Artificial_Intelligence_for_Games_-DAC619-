@@ -46,8 +46,8 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasEnemyFlag)
                 return desirability = 0.0f;
 
-            float score = GlobalEvaluators.Evaluator_CurrentScore (agent);
-            float numberOfFriendlies = GlobalEvaluators.Evaluator_NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
+            float score = DataEvaluators.TeamScore (agent);
+            float numberOfFriendlies = DataEvaluators.NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
 
             desirability = tweaker * ( ( 1 - score ) * (1 - numberOfFriendlies) );
 
@@ -77,8 +77,8 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasFriendlyFlag)
                 return desirability = 0.0f;
 
-            float score = GlobalEvaluators.Evaluator_CurrentScore (agent);
-            float numberOfFriendlies = GlobalEvaluators.Evaluator_NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
+            float score = DataEvaluators.TeamScore (agent);
+            float numberOfFriendlies = DataEvaluators.NumberOfFriendliesAtPosition (agent, lastKnownFlagPosition);
 
             desirability = tweaker * ( ( 1 - score ) * ( 1 - numberOfFriendlies ) );
 
@@ -105,9 +105,9 @@ namespace Assets.Scripts.AI_System
             if (target == null)
                 return desirability = 0.0f;
 
-            float health = GlobalEvaluators.Evaluator_Health (agent);
-            float distanceToTarget = GlobalEvaluators.Evaluator_DistanceToObject (agent.gameObject, target);
-            float strength = GlobalEvaluators.Evaluator_Strength (agent);
+            float health = DataEvaluators.Health (agent);
+            float distanceToTarget = DataEvaluators.DistanceToObject (agent.gameObject, target);
+            float strength = DataEvaluators.Strength (agent);
 
             desirability = tweaker * ( ( health * ( 1 - distanceToTarget ) ) * strength );
 
@@ -143,9 +143,9 @@ namespace Assets.Scripts.AI_System
                     return 0.0f;
             }
 
-            float health = GlobalEvaluators.Evaluator_Health (agent);
-            float distanceToPowerup = GlobalEvaluators.Evaluator_DistanceToObject (agent.gameObject, WorldManager.Instance.PowerupSpawner);
-            float score = GlobalEvaluators.Evaluator_CurrentScore (agent);
+            float health = DataEvaluators.Health (agent);
+            float distanceToPowerup = DataEvaluators.DistanceToObject (agent.gameObject, WorldManager.Instance.PowerupSpawner);
+            float score = DataEvaluators.TeamScore (agent);
 
             desirability = tweaker * ( (( ( 1 - distanceToPowerup ) ) ) );
 
@@ -173,9 +173,9 @@ namespace Assets.Scripts.AI_System
             if (agent.Inventory.HasItem (Names.PowerUp) == false)
                 return desirability = 0.0f;
 
-            float health = GlobalEvaluators.Evaluator_Health (agent);
-            float numberofEnemiesInSight = GlobalEvaluators.Evaluator_NumberOfEnemies (agent);
-            float distanceOfClosestEnemy = GlobalEvaluators.Evaluator_DistanceToObject (agent.gameObject, agent.Targeting.SelectTarget ());
+            float health = DataEvaluators.Health (agent);
+            float numberofEnemiesInSight = DataEvaluators.NumberOfEnemiesInSight (agent);
+            float distanceOfClosestEnemy = DataEvaluators.DistanceToObject (agent.gameObject, agent.Targeting.SelectTarget ());
 
             desirability = tweaker * (( 1 - distanceOfClosestEnemy ) + numberofEnemiesInSight );
 
@@ -209,9 +209,9 @@ namespace Assets.Scripts.AI_System
             }
 
             // Get the distance from here to the health item.
-            float distance = GlobalEvaluators.Evaluator_DistanceToObject (agent.gameObject, healthSpawner);
+            float distance = DataEvaluators.DistanceToObject (agent.gameObject, healthSpawner);
             // Get the health using a sigmoid logistic curve.
-            float health = UtilityCurves.Logistic.Evaluate (GlobalEvaluators.Evaluator_Health (agent));
+            float health = UtilityCurves.Logistic.Evaluate (DataEvaluators.Health (agent));
 
             // If the distance is greater than 1 then return 0 as this goal isn't desirable.
             if (distance >= 1)
@@ -246,7 +246,7 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasEnemyFlag == false)
                 return desirability = 0.0f;
 
-            float numberOFEnemies = GlobalEvaluators.Evaluator_NumberOfEnemies (agent);
+            float numberOFEnemies = DataEvaluators.NumberOfEnemiesInSight (agent);
 
             desirability = tweaker * ( ( ( 1 - numberOFEnemies ) ) );
 
@@ -271,7 +271,7 @@ namespace Assets.Scripts.AI_System
             if (agent.Data.HasFriendlyFlag == false)
                 return desirability = 0.0f;
 
-            float numberOFEnemies = GlobalEvaluators.Evaluator_NumberOfEnemies (agent);
+            float numberOFEnemies = DataEvaluators.NumberOfEnemiesInSight (agent);
 
             desirability = tweaker * ( ( ( 1 - numberOFEnemies ) ) );
 
@@ -307,8 +307,8 @@ namespace Assets.Scripts.AI_System
                 return desirability = 0.0f;
 
             Vector3 enemyFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.EnemyFlagName);
-            float health = GlobalEvaluators.Evaluator_Health (agent);
-            float distanceToFlag = GlobalEvaluators.Evaluator_DistanceToPosition (agent.gameObject, enemyFlagPosition);
+            float health = DataEvaluators.Health (agent);
+            float distanceToFlag = DataEvaluators.DistanceToPosition (agent.gameObject, enemyFlagPosition);
 
             desirability = tweaker * ( health * ( 1 - distanceToFlag ) );
 
@@ -343,9 +343,9 @@ namespace Assets.Scripts.AI_System
                 return desirability = 0.0f;
 
             Vector3 friendlyFlagPosition = WorldManager.Instance.GetLastKnownFlagPosition (agent.Data.FriendlyFlagName);
-            float health = GlobalEvaluators.Evaluator_Health (agent);
-            float distanceToFlag = GlobalEvaluators.Evaluator_DistanceToPosition (agent.gameObject, friendlyFlagPosition);
-            float flagDistanceFromBase = GlobalEvaluators.Evaluator_DistanceToPosition (agent.Data.FriendlyBase, friendlyFlagPosition);
+            float health = DataEvaluators.Health (agent);
+            float distanceToFlag = DataEvaluators.DistanceToPosition (agent.gameObject, friendlyFlagPosition);
+            float flagDistanceFromBase = DataEvaluators.DistanceToPosition (agent.Data.FriendlyBase, friendlyFlagPosition);
 
             desirability = tweaker * ( ( health + ( 1 - distanceToFlag ) ) * flagDistanceFromBase );
 
